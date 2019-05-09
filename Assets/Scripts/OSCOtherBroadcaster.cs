@@ -35,10 +35,10 @@ public class OSCOtherBroadcaster : MonoBehaviour, OSCTransmitter
     public string GenerateChuckCode( string senderObjectName, string receiverObjectName )
     {
         string chuckCode = string.Format( @"
-            global OscSend {0};
+            OscSend {0};
             {0}.setHost( ""{2}"", {1} );
 
-            global OscRecv {3};
+            OscRecv {3};
             {1} => {3}.port;
             {3}.listen();
         ", senderObjectName, myAddress.Port + 1, myAddress.Address.ToString(), receiverObjectName );

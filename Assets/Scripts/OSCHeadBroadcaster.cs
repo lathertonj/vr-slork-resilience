@@ -36,7 +36,7 @@ public class OSCHeadBroadcaster : MonoBehaviour , OSCTransmitter
     public string GenerateChucKCode( string sendArrayName, string receiveName )
     {
         string chuckCode = string.Format( @"
-            global OscSend {0}[{2}];
+            OscSend {0}[{2}];
         ", sendArrayName, receiveName, mySenders.Count );
 
         // NOTE: use the NEXT port number (port + 1) for ChucK connections
