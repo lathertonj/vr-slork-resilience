@@ -332,6 +332,10 @@ MonoBehaviour:
   - 67
   - 69
   - 72
+  myModalNotesPart1:
+  - 69
+  - 73
+  - 76
 --- !u!114 &1318187996
 MonoBehaviour:
   m_ObjectHideFlags: 0
