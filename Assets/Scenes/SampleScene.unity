@@ -333,9 +333,25 @@ MonoBehaviour:
   - 69
   - 72
   myModalNotesPart1:
-  - 69
-  - 73
+  - 71
+  - 74
+  - 78
+  - 81
+  - 83
+  - 78
+  - 81
   - 76
+  - 73
+  myAhhNotesPart1a1:
+  - 62-12
+  - 62
+  - 64
+  - 69
+  myAhhNotesPart1a2:
+  - 64-12
+  - 69-12
+  - 62
+  - 71
 --- !u!114 &1318187996
 MonoBehaviour:
   m_ObjectHideFlags: 0
