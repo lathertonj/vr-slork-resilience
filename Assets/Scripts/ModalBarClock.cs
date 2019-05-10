@@ -14,6 +14,8 @@ public class ModalBarClock : MonoBehaviour
     public string[] myArpeggioPart2a;
     public string[] myAhhNotesPart2a1;
     public string[] myAhhNotesPart2a2;
+    public string[] mySawNotesPart2a1;
+    public string[] mySawNotesPart2a2;
     int nextMovementToInit = 1;
 
     // Start is called before the first frame update
@@ -48,6 +50,7 @@ public class ModalBarClock : MonoBehaviour
         myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
             [{0}] @=> int myArpeggio[];
             [[{1}], [{2}]] @=> int myAhhNotes[][];
+            [[{5}], [{6}]] @=> int mySawNotes[][];
             int myCurrentNote;
 
             fun void ListenForPlayedNotes()
@@ -84,7 +87,7 @@ public class ModalBarClock : MonoBehaviour
                     vrSays[i].startMsg( ""/part1/nextSeedlingNote"", ""f"" );
                     vrSays[i].addFloat( myArpeggio[myCurrentNote] );
 
-                    // send out the current ahh chord notes
+                    // send out the current chord notes
                     // TODO: any chord changes should happen HERE and not in 
                     // Part2, etc.
                     vrSays[i].startMsg( ""/ahhNotes"", ""f,f,f,f,f,f,f,f"" );
@@ -97,6 +100,18 @@ public class ModalBarClock : MonoBehaviour
                     vrSays[i].addFloat( myAhhNotes[1][2] );
                     vrSays[i].addFloat( myAhhNotes[1][3] );
 
+                    vrSays[i].startMsg( ""/sawNotes"", ""f,f,f,f,f,f,f,f,f,f"" );
+                    vrSays[i].addFloat( mySawNotes[0][0] );
+                    vrSays[i].addFloat( mySawNotes[0][1] );
+                    vrSays[i].addFloat( mySawNotes[0][2] );
+                    vrSays[i].addFloat( mySawNotes[0][3] );
+                    vrSays[i].addFloat( mySawNotes[0][4] );
+                    vrSays[i].addFloat( mySawNotes[1][0] );
+                    vrSays[i].addFloat( mySawNotes[1][1] );
+                    vrSays[i].addFloat( mySawNotes[1][2] );
+                    vrSays[i].addFloat( mySawNotes[1][3] );
+                    vrSays[i].addFloat( mySawNotes[1][4] );
+
                 }}
                 10::ms => now;
             }}
@@ -105,7 +120,9 @@ public class ModalBarClock : MonoBehaviour
             string.Join( ", ", myAhhNotesPart1a1 ),
             string.Join( ", ", myAhhNotesPart1a2 ),
             string.Join( ", ", myAhhNotesPart2a1 ),
-            string.Join( ", ", myAhhNotesPart2a2 )
+            string.Join( ", ", myAhhNotesPart2a2 ),
+            string.Join( ", ", mySawNotesPart2a1 ),
+            string.Join( ", ", mySawNotesPart2a2 )
         ) );
     }
 

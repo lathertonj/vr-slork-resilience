@@ -369,11 +369,21 @@ MonoBehaviour:
   - 69
   myAhhNotesPart2a1:
   - 50
+  - 54+12
+  - 61
+  - 64+12
+  myAhhNotesPart2a2:
+  - 45
+  - 49+12
+  - 56
+  - 66+12
+  mySawNotesPart2a1:
+  - 50
   - 54
   - 57
   - 61
   - 64
-  myAhhNotesPart2a2:
+  mySawNotesPart2a2:
   - 45
   - 49
   - 52
