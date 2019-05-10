@@ -326,12 +326,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   myOSC: {fileID: 1670365832}
-  myArpeggio:
-  - 60
-  - 64
-  - 67
-  - 69
-  - 72
   myModalNotesPart1:
   - 71
   - 74
@@ -352,6 +346,39 @@ MonoBehaviour:
   - 69-12
   - 62
   - 71
+  myArpeggioPart2a:
+  - 66
+  - 69
+  - 73
+  - 76
+  - 78
+  - 71
+  - 68
+  - 64
+  - 61
+  - 66
+  - 69
+  - 73
+  - 76
+  - 78
+  - 71
+  - 68
+  - 64
+  - 61
+  - 66
+  - 69
+  myAhhNotesPart2a1:
+  - 50
+  - 54
+  - 57
+  - 61
+  - 64
+  myAhhNotesPart2a2:
+  - 45
+  - 49
+  - 52
+  - 56
+  - 66
 --- !u!114 &1318187996
 MonoBehaviour:
   m_ObjectHideFlags: 0

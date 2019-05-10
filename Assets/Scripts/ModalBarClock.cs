@@ -6,12 +6,15 @@ public class ModalBarClock : MonoBehaviour
 {
     public OSCHeadBroadcaster myOSC;
     private ChuckSubInstance myChuck;
-    public string[] myArpeggio;
 
     public string[] myModalNotesPart1;
     public string[] myAhhNotesPart1a1;
     public string[] myAhhNotesPart1a2;
-    bool haveInitChuck = false;
+
+    public string[] myArpeggioPart2a;
+    public string[] myAhhNotesPart2a1;
+    public string[] myAhhNotesPart2a2;
+    int nextMovementToInit = 1;
 
     // Start is called before the first frame update
     void Start()
@@ -22,14 +25,24 @@ public class ModalBarClock : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if( !haveInitChuck  && Input.GetKeyDown( "space" ) )
+        if( Input.GetKeyDown( "space" ) )
         {
-            StartChuck();
-            haveInitChuck = true;
+            switch( nextMovementToInit )
+            {
+                case 1:
+                    StartChuckPart1();
+                    break;
+                case 2:
+                    StartChuckPart2();
+                    break;
+                default:
+                    break;
+            }
+            nextMovementToInit++;
         }
     }
 
-    void StartChuck()
+    void StartChuckPart1()
     {
         // part 1: advertise the next note   
         myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
@@ -55,6 +68,14 @@ public class ModalBarClock : MonoBehaviour
             }}
             spork ~ ListenForPlayedNotes();
 
+            fun void ReplaceAhhNotesForPart2()
+            {{
+                global Event startPart2;
+                startPart2 => now;
+                [[{3}], [{4}]] @=> myAhhNotes;
+            }}
+            spork ~ ReplaceAhhNotesForPart2();
+
             while( true )
             {{
                 for( int i; i < vrSays.size(); i++ )
@@ -64,7 +85,9 @@ public class ModalBarClock : MonoBehaviour
                     vrSays[i].addFloat( myArpeggio[myCurrentNote] );
 
                     // send out the current ahh chord notes
-                    vrSays[i].startMsg( ""/part1/ahhNotes"", ""f,f,f,f,f,f,f,f"" );
+                    // TODO: any chord changes should happen HERE and not in 
+                    // Part2, etc.
+                    vrSays[i].startMsg( ""/ahhNotes"", ""f,f,f,f,f,f,f,f"" );
                     vrSays[i].addFloat( myAhhNotes[0][0] );
                     vrSays[i].addFloat( myAhhNotes[0][1] );
                     vrSays[i].addFloat( myAhhNotes[0][2] );
@@ -80,15 +103,30 @@ public class ModalBarClock : MonoBehaviour
         ", 
             string.Join( ", ", myModalNotesPart1 ), 
             string.Join( ", ", myAhhNotesPart1a1 ),
-            string.Join( ", ", myAhhNotesPart1a2 )
+            string.Join( ", ", myAhhNotesPart1a2 ),
+            string.Join( ", ", myAhhNotesPart2a1 ),
+            string.Join( ", ", myAhhNotesPart2a2 )
         ) );
+    }
 
+    void StartChuckPart2()
+    {
+        // inform above code to change chords
+        myChuck.SignalEvent( "startPart2" );
+        
         // regular modal clock, to be used in part 2
-        /* myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
+        myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
             [{0}] @=> int myArpeggio[];
             0 => int currentReceiver;
 
-            0.125 => global float noteLengthSeconds;
+            // advance to part 2
+            for( int i; i < vrSays.size(); i++ )
+            {{
+                vrSays[ i ].startMsg( ""/advanceToPart2"", ""i"" );
+                vrSays[ i ].addInt( 1 );
+            }}
+
+            0.21 => global float noteLengthSeconds;
             true => int hardPick;
             while( true )
             {{
@@ -111,8 +149,8 @@ public class ModalBarClock : MonoBehaviour
                     noteLengthSeconds::second => now;
                 }}
             }}
-        ", string.Join( ", ", myArpeggio ) ) );
-        */
+        ", string.Join( ", ", myArpeggioPart2a ) ) );
+        
 
         
     }
