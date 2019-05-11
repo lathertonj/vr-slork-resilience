@@ -53,6 +53,13 @@ public class ModalBarClock : MonoBehaviour
             [[{5}], [{6}]] @=> int mySawNotes[][];
             int myCurrentNote;
 
+            // advance to part 1
+            for( int i; i < vrSays.size(); i++ )
+            {{
+                vrSays[ i ].startMsg( ""/advanceToPart1"", ""i"" );
+                vrSays[ i ].addInt( 1 );
+            }}
+
             fun void ListenForPlayedNotes()
             {{
                 vrHear.event( ""/part1/playedSeedlingNote"", ""i"" ) @=> OscEvent someonePlayedANote;
