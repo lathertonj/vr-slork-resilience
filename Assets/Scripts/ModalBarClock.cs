@@ -53,6 +53,9 @@ public class ModalBarClock : MonoBehaviour
             [[{5}], [{6}]] @=> int mySawNotes[][];
             int myCurrentNote;
 
+            global float currentWindExcitation;
+            0.97 => float windDecay;
+
             // advance to part 1
             for( int i; i < vrSays.size(); i++ )
             {{
@@ -77,6 +80,21 @@ public class ModalBarClock : MonoBehaviour
                 }}
             }}
             spork ~ ListenForPlayedNotes();
+
+            fun void ListenForWindExcitation()
+            {{
+                vrHear.event( ""/part1/excitation"", ""f"" ) @=> OscEvent windExcitation;
+                while( true )
+                {{
+                    windExcitation => now;
+                    while( windExcitation.nextMsg() != 0 )
+                    {{
+                        windExcitation.getFloat() +=> currentWindExcitation;
+                        windDecay *=> currentWindExcitation;
+                    }}
+                }}
+            }}
+            spork ~ ListenForWindExcitation();
 
             fun void ReplaceAhhNotesForPart2()
             {{
