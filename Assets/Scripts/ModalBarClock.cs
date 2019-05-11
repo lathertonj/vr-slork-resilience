@@ -16,6 +16,10 @@ public class ModalBarClock : MonoBehaviour
     public string[] myAhhNotesPart2a2;
     public string[] mySawNotesPart2a1;
     public string[] mySawNotesPart2a2;
+    public string[] myAhhNotesPart3a1;
+    public string[] myAhhNotesPart3a2;
+    public string[] mySawNotesPart3a1;
+    public string[] mySawNotesPart3a2;
     int nextMovementToInit = 1;
 
     // Start is called before the first frame update
@@ -36,6 +40,9 @@ public class ModalBarClock : MonoBehaviour
                     break;
                 case 2:
                     StartChuckPart2();
+                    break;
+                case 3:
+                    StartChuckPart3();
                     break;
                 default:
                     break;
@@ -104,6 +111,15 @@ public class ModalBarClock : MonoBehaviour
             }}
             spork ~ ReplaceAhhNotesForPart2();
 
+            global Event startPart3;
+            fun void ReplaceNotesForPart3()
+            {{
+                startPart3 => now;
+                [[{7}], [{8}]] @=> myAhhNotes;
+                [[{9}], [{10}]] @=> mySawNotes;
+            }}
+            spork ~ ReplaceNotesForPart3();
+
             while( true )
             {{
                 for( int i; i < vrSays.size(); i++ )
@@ -147,14 +163,18 @@ public class ModalBarClock : MonoBehaviour
             string.Join( ", ", myAhhNotesPart2a1 ),
             string.Join( ", ", myAhhNotesPart2a2 ),
             string.Join( ", ", mySawNotesPart2a1 ),
-            string.Join( ", ", mySawNotesPart2a2 )
+            string.Join( ", ", mySawNotesPart2a2 ),
+            string.Join( ", ", myAhhNotesPart3a1 ),
+            string.Join( ", ", myAhhNotesPart3a2 ),
+            string.Join( ", ", mySawNotesPart3a1 ),
+            string.Join( ", ", mySawNotesPart3a2 )
         ) );
     }
 
     void StartChuckPart2()
     {
         // inform above code to change chords
-        myChuck.SignalEvent( "startPart2" );
+        myChuck.BroadcastEvent( "startPart2" );
         
         // regular modal clock, to be used in part 2
         myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
@@ -168,14 +188,72 @@ public class ModalBarClock : MonoBehaviour
                 vrSays[ i ].addInt( 1 );
             }}
 
+            // TODO: timing based on VR
             0.21 => global float noteLengthSeconds;
+            true => int hardPick;
+
+            fun void SendTempoEvents()
+            {{
+                while( true )
+                {{
+                    for( int i; i < myArpeggio.size(); i++ )
+                    {{
+                        // play note
+                        vrSays[ currentReceiver ].startMsg( ""/playModal"", ""f,f,f"" );
+                        vrSays[ currentReceiver ].addFloat( myArpeggio[i] );
+                        vrSays[ currentReceiver ].addFloat( Math.random2f( 0.2, 0.8 ) );
+                        vrSays[ currentReceiver ].addFloat( Math.random2f( 0.3, 0.4 ) + 0.17 * hardPick );
+
+                        // switch for next time
+                        !hardPick => hardPick;
+
+                        // find next receiver
+                        currentReceiver++;
+                        currentReceiver % vrSays.size() => currentReceiver;
+
+                        // wait
+                        noteLengthSeconds::second => now;
+                    }}
+                }}
+            }}
+            spork ~ SendTempoEvents() @=> Shred part2TempoEvents;
+
+            global Event startPart3;
+            startPart3 => now;
+            part2TempoEvents.exit();
+
+        ", string.Join( ", ", myArpeggioPart2a ) ) );
+        
+
+        
+    }
+
+    void StartChuckPart3()
+    {
+        // inform above code to change chords
+        myChuck.BroadcastEvent( "startPart3" );
+        
+        // regular modal clock, to be used in part 3
+        myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
+            [{0}] @=> int myArpeggio[];
+            0 => int currentReceiver;
+
+            // advance to part 2
+            for( int i; i < vrSays.size(); i++ )
+            {{
+                vrSays[ i ].startMsg( ""/advanceToPart3"", ""i"" );
+                vrSays[ i ].addInt( 1 );
+            }}
+
+            // TODO: timing based on rain
+            0.41 => global float noteLengthSeconds;
             true => int hardPick;
             while( true )
             {{
                 for( int i; i < myArpeggio.size(); i++ )
                 {{
                     // play note
-                    vrSays[ currentReceiver ].startMsg( ""/playModal"", ""f,f,f"" );
+                    vrSays[ currentReceiver ].startMsg( ""/part3/playModal"", ""f,f,f"" );
                     vrSays[ currentReceiver ].addFloat( myArpeggio[i] );
                     vrSays[ currentReceiver ].addFloat( Math.random2f( 0.2, 0.8 ) );
                     vrSays[ currentReceiver ].addFloat( Math.random2f( 0.3, 0.4 ) + 0.17 * hardPick );
@@ -192,8 +270,6 @@ public class ModalBarClock : MonoBehaviour
                 }}
             }}
         ", string.Join( ", ", myArpeggioPart2a ) ) );
-        
-
-        
+        // TODO replace arpeggio
     }
 }
