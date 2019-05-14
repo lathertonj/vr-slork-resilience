@@ -422,21 +422,31 @@ MonoBehaviour:
   - 68-12
   - 71-12
   mySawNotesPart3a1:
-  - 60
-  - 60
-  - 60
-  - 60
-  - 60
+  - 62-12
+  - 62
+  - 64
+  - 69
+  - 73
   mySawNotesPart3a2:
-  - 60
-  - 60
-  - 60
-  - 60
-  - 60
+  - 64-12
+  - 64
+  - 69
+  - 71
+  - 78
   myArpeggioPart3a:
   - 66
   - 68
   - 73
+  myArpeggioPart3b:
+  - 62
+  - 64
+  - 73
+  - 74
+  - 69
+  - 66
+  - 71
+  - 69
+  - 64
 --- !u!114 &1318187996
 MonoBehaviour:
   m_ObjectHideFlags: 0

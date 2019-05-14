@@ -25,12 +25,13 @@ public class ModalBarClock : MonoBehaviour
     public string[] mySawNotesPart3a1;
     public string[] mySawNotesPart3a2;
     public string[] myArpeggioPart3a;
+    public string[] myArpeggioPart3b;
     int nextMovementToInit = 1;
 
     // Start is called before the first frame update
     void Start()
     {
-        myChuck = GetComponent<ChuckSubInstance>();        
+        myChuck = GetComponent<ChuckSubInstance>();      
     }
 
     // Update is called once per frame
@@ -79,7 +80,10 @@ public class ModalBarClock : MonoBehaviour
         {
             myChuck.BroadcastEvent( "part2bChords" );
         }
-
+        if( Input.GetKeyDown( "'" ) )
+        {
+            myChuck.BroadcastEvent( "part3Raindrop" );
+        }
 
     }
 
@@ -244,7 +248,6 @@ public class ModalBarClock : MonoBehaviour
                         vrSays[ i ].addFloat( part2DistortionAmount );
                     }}
                     50::ms => now;
-                    <<< part2DistortionAmount >>>;
                 }}
             }}
             spork ~ SendDistortionAmount();
@@ -297,6 +300,9 @@ public class ModalBarClock : MonoBehaviour
         // regular modal clock, to be used in part 3
         myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
             [{0}] @=> int myArpeggio[];
+            [[{1}], [{2}]] @=> int mySawNotes[][];
+            [{3}] @=> int myRainArpeggio[];
+
             0 => int currentReceiver;
             int myCurrentNote;
 
@@ -346,6 +352,45 @@ public class ModalBarClock : MonoBehaviour
             0.41 => global float noteLengthSeconds;
             true => int hardPick;
 
+            global Event part3Raindrop;
+            fun void DoRaindrops()
+            {{
+                while( true )
+                {{
+                    for( int i; i < myRainArpeggio.size(); i++ )
+                    {{
+                        part3Raindrop => now;
+
+                        // play note
+                        vrSays[ currentReceiver ].startMsg( ""/playRainModal"", ""f,f,f"" );
+                        vrSays[ currentReceiver ].addFloat( myRainArpeggio[i] );
+                        vrSays[ currentReceiver ].addFloat( Math.random2f( 0.2, 0.8 ) );
+                        vrSays[ currentReceiver ].addFloat( Math.random2f( 0.3, 0.4 ) + 0.17 * hardPick );
+
+                        // switch for next time
+                        !hardPick => hardPick;
+
+                        // also ask for a swell
+                        vrSays[ currentReceiver ].startMsg( ""/playRainSwell"", ""i,i,i,i,i"" );
+                        0 => int which;
+                        // randomly pick between chord 0 or 1 with 0.5 probability
+                        if( Math.random2f( 0, 1 ) < 0.5 ) 
+                        {{
+                            1 => which;
+                        }}
+                        for( int i; i < mySawNotes[which].size(); i++ )
+                        {{
+                            vrSays[ currentReceiver ].addInt( mySawNotes[which][i] );
+                        }}
+
+                        // find next receiver
+                        currentReceiver++;
+                        currentReceiver % vrSays.size() => currentReceiver;
+                    }}
+                }}
+            }}
+            spork ~ DoRaindrops();
+
             while( true )
             {{
                 for( int i; i < vrSays.size(); i++ )
@@ -358,30 +403,12 @@ public class ModalBarClock : MonoBehaviour
                 10::ms => now;
             }}
             
-            // TODO
-            // for rain, maybe later
-            while( true )
-            {{
-                for( int i; i < myArpeggio.size(); i++ )
-                {{
-                    // play note
-                    vrSays[ currentReceiver ].startMsg( ""/part3/playModal"", ""f,f,f"" );
-                    vrSays[ currentReceiver ].addFloat( myArpeggio[i] );
-                    vrSays[ currentReceiver ].addFloat( Math.random2f( 0.2, 0.8 ) );
-                    vrSays[ currentReceiver ].addFloat( Math.random2f( 0.3, 0.4 ) + 0.17 * hardPick );
-
-                    // switch for next time
-                    !hardPick => hardPick;
-
-                    // find next receiver
-                    currentReceiver++;
-                    currentReceiver % vrSays.size() => currentReceiver;
-
-                    // wait
-                    noteLengthSeconds::second => now;
-                }}
-            }}
-        ", string.Join( ", ", myArpeggioPart3a ) ) );
+        ", 
+            string.Join( ", ", myArpeggioPart3a ),
+            string.Join( ", ", mySawNotesPart3a1 ),
+            string.Join( ", ", mySawNotesPart3a2 ),
+            string.Join( ", ", myArpeggioPart3b )
+        ) ) ;
         // TODO replace arpeggio
     }
 }
