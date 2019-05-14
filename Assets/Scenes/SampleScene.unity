@@ -412,15 +412,15 @@ MonoBehaviour:
   - 61
   - 64
   myAhhNotesPart3a1:
-  - 60
-  - 60
-  - 60
-  - 60
+  - 66-24
+  - 64
+  - 68-12
+  - 73-12
   myAhhNotesPart3a2:
-  - 60
-  - 60
-  - 60
-  - 60
+  - 61-24
+  - 64
+  - 68-12
+  - 71-12
   mySawNotesPart3a1:
   - 60
   - 60
@@ -433,6 +433,10 @@ MonoBehaviour:
   - 60
   - 60
   - 60
+  myArpeggioPart3a:
+  - 66
+  - 68
+  - 73
 --- !u!114 &1318187996
 MonoBehaviour:
   m_ObjectHideFlags: 0

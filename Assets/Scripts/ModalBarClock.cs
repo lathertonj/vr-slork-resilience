@@ -24,6 +24,7 @@ public class ModalBarClock : MonoBehaviour
     public string[] myAhhNotesPart3a2;
     public string[] mySawNotesPart3a1;
     public string[] mySawNotesPart3a2;
+    public string[] myArpeggioPart3a;
     int nextMovementToInit = 1;
 
     // Start is called before the first frame update
@@ -297,17 +298,68 @@ public class ModalBarClock : MonoBehaviour
         myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
             [{0}] @=> int myArpeggio[];
             0 => int currentReceiver;
+            int myCurrentNote;
 
-            // advance to part 2
+            // advance to part 3
             for( int i; i < vrSays.size(); i++ )
             {{
                 vrSays[ i ].startMsg( ""/advanceToPart3"", ""i"" );
                 vrSays[ i ].addInt( 1 );
             }}
 
+            global float currentWindExcitationPart3;
+            0.97 => float windDecay;
+            fun void ListenForWindExcitation()
+            {{
+                vrHear.event( ""/part3/excitation"", ""f"" ) @=> OscEvent windExcitation;
+                while( true )
+                {{
+                    windExcitation => now;
+                    while( windExcitation.nextMsg() != 0 )
+                    {{
+                        windExcitation.getFloat() +=> currentWindExcitationPart3;
+                        windDecay *=> currentWindExcitationPart3;
+                    }}
+                }}
+            }}
+            spork ~ ListenForWindExcitation();
+
+            fun void ListenForPlayedNotes()
+            {{
+                vrHear.event( ""/part3/playedSadSeedlingNote"", ""i"" ) @=> OscEvent someonePlayedANote;
+
+                while( true )
+                {{
+                    someonePlayedANote => now;
+                    while( someonePlayedANote.nextMsg() != 0 )
+                    {{
+                        // ignore argument
+                        someonePlayedANote.getInt();
+
+                        ( myCurrentNote + 1 ) % myArpeggio.size() => myCurrentNote;
+                    }}
+                }}
+            }}
+            spork ~ ListenForPlayedNotes();
+
             // TODO: timing based on rain
             0.41 => global float noteLengthSeconds;
             true => int hardPick;
+
+            while( true )
+            {{
+                for( int i; i < vrSays.size(); i++ )
+                {{
+                    // send out the next note someone should play
+                    vrSays[i].startMsg( ""/part3/nextSeedlingNote"", ""f"" );
+                    vrSays[i].addFloat( myArpeggio[myCurrentNote] );
+
+                }}
+                10::ms => now;
+            }}
+            
+            // TODO
+            // for rain, maybe later
             while( true )
             {{
                 for( int i; i < myArpeggio.size(); i++ )
@@ -329,7 +381,7 @@ public class ModalBarClock : MonoBehaviour
                     noteLengthSeconds::second => now;
                 }}
             }}
-        ", string.Join( ", ", myArpeggioPart2a ) ) );
+        ", string.Join( ", ", myArpeggioPart3a ) ) );
         // TODO replace arpeggio
     }
 }
