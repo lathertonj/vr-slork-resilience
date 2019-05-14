@@ -389,6 +389,28 @@ MonoBehaviour:
   - 52
   - 56
   - 66
+  myAhhNotesPart2b1:
+  - 61-12
+  - 64+12
+  - 68
+  - 71
+  myAhhNotesPart2b2:
+  - 66-12
+  - 64+12
+  - 68
+  - 73
+  mySawNotesPart2b1:
+  - 49
+  - 56
+  - 59
+  - 61
+  - 64
+  mySawNotesPart2b2:
+  - 42
+  - 56
+  - 66
+  - 61
+  - 64
   myAhhNotesPart3a1:
   - 60
   - 60

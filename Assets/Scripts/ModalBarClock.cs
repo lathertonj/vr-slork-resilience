@@ -16,6 +16,10 @@ public class ModalBarClock : MonoBehaviour
     public string[] myAhhNotesPart2a2;
     public string[] mySawNotesPart2a1;
     public string[] mySawNotesPart2a2;
+    public string[] myAhhNotesPart2b1;
+    public string[] myAhhNotesPart2b2;
+    public string[] mySawNotesPart2b1;
+    public string[] mySawNotesPart2b2;
     public string[] myAhhNotesPart3a1;
     public string[] myAhhNotesPart3a2;
     public string[] mySawNotesPart3a1;
@@ -49,6 +53,33 @@ public class ModalBarClock : MonoBehaviour
             }
             nextMovementToInit++;
         }
+
+        if( Input.GetKeyDown( "1" ) )
+        {
+            myChuck.SetFloat( "part2DistortionAmount", 0.0 );
+        }
+        if( Input.GetKeyDown( "2" ) )
+        {
+            myChuck.SetFloat( "part2DistortionAmount", 0.25 );
+        }
+        if( Input.GetKeyDown( "3" ) )
+        {
+            myChuck.SetFloat( "part2DistortionAmount", 0.5 );
+        }
+        if( Input.GetKeyDown( "4" ) )
+        {
+            myChuck.SetFloat( "part2DistortionAmount", 0.75 );
+        }
+        if( Input.GetKeyDown( "5" ) )
+        {
+            myChuck.SetFloat( "part2DistortionAmount", 1.0 );
+        }
+        if( Input.GetKeyDown( "6" ) )
+        {
+            myChuck.BroadcastEvent( "part2bChords" );
+        }
+
+
     }
 
     void StartChuckPart1()
@@ -111,6 +142,15 @@ public class ModalBarClock : MonoBehaviour
             }}
             spork ~ ReplaceAhhNotesForPart2();
 
+            fun void ReplaceNotesForPart2b()
+            {{
+                global Event part2bChords;
+                part2bChords => now;
+                [[{11}], [{12}]] @=> myAhhNotes;
+                [[{13}], [{14}]] @=> mySawNotes;
+            }}
+            spork ~ ReplaceNotesForPart2b();
+
             global Event startPart3;
             fun void ReplaceNotesForPart3()
             {{
@@ -167,7 +207,11 @@ public class ModalBarClock : MonoBehaviour
             string.Join( ", ", myAhhNotesPart3a1 ),
             string.Join( ", ", myAhhNotesPart3a2 ),
             string.Join( ", ", mySawNotesPart3a1 ),
-            string.Join( ", ", mySawNotesPart3a2 )
+            string.Join( ", ", mySawNotesPart3a2 ),
+            string.Join( ", ", myAhhNotesPart2b1 ),
+            string.Join( ", ", myAhhNotesPart2b2 ),
+            string.Join( ", ", mySawNotesPart2b1 ),
+            string.Join( ", ", mySawNotesPart2b2 )
         ) );
     }
 
@@ -187,6 +231,22 @@ public class ModalBarClock : MonoBehaviour
                 vrSays[ i ].startMsg( ""/advanceToPart2"", ""i"" );
                 vrSays[ i ].addInt( 1 );
             }}
+
+            global float part2DistortionAmount;
+            fun void SendDistortionAmount()
+            {{
+                while( true )
+                {{
+                    for( int i; i < vrSays.size(); i++ )
+                    {{
+                        vrSays[ i ].startMsg( ""/part2Distortion"", ""f"" );
+                        vrSays[ i ].addFloat( part2DistortionAmount );
+                    }}
+                    50::ms => now;
+                    <<< part2DistortionAmount >>>;
+                }}
+            }}
+            spork ~ SendDistortionAmount();
 
             // TODO: timing based on VR
             0.21 => global float noteLengthSeconds;
