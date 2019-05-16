@@ -13,6 +13,8 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
     public ushort OSCPort;
     // TODO refactor to use a text file in streaming assets
     public string[] hosts;
+    public bool useChuckForHandshake = true;
+    public bool disableNonChuckOSC = true;
 
 
     // send a message to all our listeners
@@ -50,12 +52,13 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
             i++;
         }
 
+        // NOTE: use different port for receiving, because 
+        // everything in life is awful, brb dying
         chuckCode += string.Format( @"
             OscRecv {0};
             {1} => {0}.port;
             {0}.listen();
-        ", receiveName, OSCPort );
-
+        ", receiveName, OSCPort + 1 );
 
         return chuckCode;
     }
@@ -86,30 +89,33 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
 
     void Start()
     {
-        // make senders
-        foreach( string host in hosts )
+        if( disableNonChuckOSC )
         {
-            mySenders[host] = new SharpOSC.UDPSender( host, OSCPort );
-            if( myIP == "" )
+            // make senders. TODO get hosts from text file
+            foreach( string host in hosts )
             {
-                myIP = GetMyIP( mySenders[host] );
+                mySenders[host] = new SharpOSC.UDPSender( host, OSCPort );
+                if( myIP == "" )
+                {
+                    myIP = GetMyIP( mySenders[host] );
+                }
             }
+
+            // start OSC listener on port OSCPort
+            // define the callback
+            SharpOSC.HandleOscPacket listenerCallback = delegate ( SharpOSC.OscPacket packet )
+            {
+                // get message
+                SharpOSC.OscMessage messageReceived = (SharpOSC.OscMessage)packet;
+
+                // send message along to be processed on the main thread in Update()
+                myOSCIncomingMessages.Enqueue( Tuple.Create( messageReceived.Address, messageReceived.Arguments ) );
+            };
+
+
+            // set up the listener callback
+            myListener = new SharpOSC.UDPListener( OSCPort, listenerCallback );
         }
-
-        // start OSC listener on port OSCPort
-        // define the callback
-        SharpOSC.HandleOscPacket listenerCallback = delegate ( SharpOSC.OscPacket packet )
-        {
-            // get message
-            SharpOSC.OscMessage messageReceived = (SharpOSC.OscMessage)packet;
-
-            // send message along to be processed on the main thread in Update()
-            myOSCIncomingMessages.Enqueue( Tuple.Create( messageReceived.Address, messageReceived.Arguments ) );
-        };
-
-
-        // set up the listener callback
-        myListener = new SharpOSC.UDPListener( OSCPort, listenerCallback );
 
 
         // find my IP
@@ -120,7 +126,33 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
         }
 
         // blast out my IP forever, in case anyone has to restart chuck
-        InvokeRepeating( "SendMyIP", 1, 1 );
+        if( useChuckForHandshake )
+        {
+            string preamble = string.Format( @"OscSend handshakes[{0}];
+            ", hosts.Length );
+            for( int i = 0; i < hosts.Length; i++ )
+            {
+                preamble += string.Format( @"handshakes[{0}].setHost(""{1}"", {2}); 
+                ", i, hosts[i], OSCPort );
+            }
+            GetComponent<ChuckSubInstance>().RunCode( string.Format( preamble + @"
+                while( true )
+                {{
+                    for( int i; i < handshakes.size(); i++ )
+                    {{
+                        handshakes[i].startMsg( ""/__serverIP__"", ""s"" );
+                        handshakes[i].addString( ""{0}"" );
+                    }}
+                    1::second => now;
+                }}
+                
+            ", myIP ) );
+        }
+        else
+        {
+            InvokeRepeating( "SendMyIP", 1, 1 );
+        }
+            
     }
 
     void SendMyIP()

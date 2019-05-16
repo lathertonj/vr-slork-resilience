@@ -113,7 +113,6 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                 while( true )
                 {{
                     someonePlayedANote => now;
-                    <<< ""someone played a note!"">>>;
                     while( someonePlayedANote.nextMsg() != 0 )
                     {{
                         // ignore argument
@@ -131,7 +130,6 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                 while( true )
                 {{
                     windExcitation => now;
-                    <<< ""heard some wind excitation"">>>;
                     while( windExcitation.nextMsg() != 0 )
                     {{
                         windExcitation.getFloat() +=> currentWindExcitation;
