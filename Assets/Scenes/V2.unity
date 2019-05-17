@@ -244,8 +244,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   OSCPort: 13889
-  hosts:
-  - jambalaya.local
+  hostListFile: SLOrkHostnames.txt
+  useChuckForHandshake: 1
+  disableNonChuckOSC: 1
 --- !u!4 &802711940
 Transform:
   m_ObjectHideFlags: 0
@@ -272,7 +273,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64fc452e9dd76e946b9f0ffb28c396c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myOSC: {fileID: 0}
   myModalNotesPart1:
   - 71
   - 74

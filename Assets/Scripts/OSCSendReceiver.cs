@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
@@ -12,7 +13,7 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
     // tell listeners which port to communicate over
     public ushort OSCPort;
     // TODO refactor to use a text file in streaming assets
-    public string[] hosts;
+    public string hostListFile;
     public bool useChuckForHandshake = true;
     public bool disableNonChuckOSC = true;
 
@@ -89,6 +90,9 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
 
     void Start()
     {
+        List< string > hosts = FindHostnames();
+
+
         if( disableNonChuckOSC )
         {
             // make senders. TODO get hosts from text file
@@ -129,8 +133,8 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
         if( useChuckForHandshake )
         {
             string preamble = string.Format( @"OscSend handshakes[{0}];
-            ", hosts.Length );
-            for( int i = 0; i < hosts.Length; i++ )
+            ", hosts.Count );
+            for( int i = 0; i < hosts.Count; i++ )
             {
                 preamble += string.Format( @"handshakes[{0}].setHost(""{1}"", {2}); 
                 ", i, hosts[i], OSCPort );
@@ -153,6 +157,23 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
             InvokeRepeating( "SendMyIP", 1, 1 );
         }
             
+    }
+
+    List< string > FindHostnames()
+    {
+        List< string > hosts = new List< string >();
+
+        string line;
+        System.IO.StreamReader file =   
+            new System.IO.StreamReader( File.OpenRead( string.Format( 
+                "{0}/{1}", Application.streamingAssetsPath, hostListFile ) ) );  
+        while( ( line = file.ReadLine() ) != null )  
+        {  
+            hosts.Add( line.Trim() );
+        }  
+        file.Close(); 
+
+        return hosts;
     }
 
     void SendMyIP()
