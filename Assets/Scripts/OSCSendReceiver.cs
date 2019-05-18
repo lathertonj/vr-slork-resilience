@@ -42,10 +42,10 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
     {
         string chuckCode = string.Format( @"
             OscSend {0}[{2}];
-        ", sendArrayName, receiveName, mySenders.Count );
+        ", sendArrayName, receiveName, hosts.Count );
 
         int i = 0;
-        foreach( string ipAddress in mySenders.Keys )
+        foreach( string ipAddress in hosts )
         {
             chuckCode += string.Format( @"
             {3}[{0}].setHost( ""{2}"", {1} );
@@ -78,6 +78,7 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
     private Dictionary<string, Action<List<object>>> myOSCResponders;
     private Queue<Tuple<string, List<object>>> myOSCIncomingMessages;
     private string myIP = "";
+    private List< string> hosts;
 
 
     // init data structures
@@ -90,10 +91,10 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
 
     void Start()
     {
-        List< string > hosts = FindHostnames();
+        hosts = FindHostnames();
 
 
-        if( disableNonChuckOSC )
+        if( !disableNonChuckOSC )
         {
             // make senders. TODO get hosts from text file
             foreach( string host in hosts )
@@ -101,7 +102,7 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
                 mySenders[host] = new SharpOSC.UDPSender( host, OSCPort );
                 if( myIP == "" )
                 {
-                    myIP = GetMyIP( mySenders[host] );
+                    myIP = GetMyIP( mySenders[host].Address );
                 }
             }
 
@@ -119,6 +120,10 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
 
             // set up the listener callback
             myListener = new SharpOSC.UDPListener( OSCPort, listenerCallback );
+        }
+        else
+        {
+            myIP = GetMyIP( "8.8.8.8" );
         }
 
 
@@ -181,12 +186,12 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
         SendMessage( "/__serverIP__", myIP );
     }
 
-    string GetMyIP( SharpOSC.UDPSender exampleSender )
+    string GetMyIP( string dummyAddress )
     {
         string localIP;
         using( Socket socket = new Socket( AddressFamily.InterNetwork, SocketType.Dgram, 0 ) )
         {
-            socket.Connect( exampleSender.Address, 65530 );
+            socket.Connect( dummyAddress, 65530 );
             IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
             localIP = endPoint.Address.ToString();
         }
@@ -197,17 +202,20 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
     void Update()
     {
         // while we have messages
-        while( myOSCIncomingMessages.Count > 0 )
+        if( !disableNonChuckOSC )
         {
-            // fetch messages
-            Tuple<string, List<object>> oscMessage = myOSCIncomingMessages.Dequeue();
-
-            // route messages
-            // check if we know this address
-            if( myOSCResponders.ContainsKey( oscMessage.Item1 ) )
+            while( myOSCIncomingMessages.Count > 0 )
             {
-                // send the address along to the responder
-                myOSCResponders[oscMessage.Item1]( oscMessage.Item2 );
+                // fetch messages
+                Tuple<string, List<object>> oscMessage = myOSCIncomingMessages.Dequeue();
+
+                // route messages
+                // check if we know this address
+                if( myOSCResponders.ContainsKey( oscMessage.Item1 ) )
+                {
+                    // send the address along to the responder
+                    myOSCResponders[oscMessage.Item1]( oscMessage.Item2 );
+                }
             }
         }
     }
@@ -215,7 +223,10 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
     void OnApplicationQuit()
     {
         // close OSC callback / listener
-        myListener.Close();
+        if( myListener != null )
+        {
+            myListener.Close();
+        }
 
         // close OSC senders
         foreach( string host in mySenders.Keys )

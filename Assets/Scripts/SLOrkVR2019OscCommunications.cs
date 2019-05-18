@@ -1,9 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
 
 public class SLOrkVR2019OscCommunications : MonoBehaviour
 {
+    public SteamVR_Input_Sources handType; // 1
+    public SteamVR_Action_Boolean advanceToNextPartAction; // 2
+
     private OSCSendReceiver myOSC;
     private ChuckSubInstance myChuck;
 
@@ -35,10 +39,16 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
         myOSC = GetComponent<OSCSendReceiver>();
     }
 
+    bool ShouldAdvanceToNextPart()
+    {
+        // application button or space bar
+        return advanceToNextPartAction.GetStateDown( handType ) || Input.GetKeyDown( "space" ) ;
+    }
+
     // Update is called once per frame
     void Update()
     {
-        if( Input.GetKeyDown( "space" ) )
+        if( ShouldAdvanceToNextPart() )
         {
             switch( nextMovementToInit )
             {
@@ -98,6 +108,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             int myCurrentNote;
 
             global float currentWindExcitation;
+            global Event part1SeedlingNotePlayed;
             0.97 => float windDecay;
 
             // advance to part 1
@@ -119,6 +130,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                         someonePlayedANote.getInt();
 
                         ( myCurrentNote + 1 ) % myArpeggio.size() => myCurrentNote;
+                        part1SeedlingNotePlayed.broadcast();
                     }}
                 }}
             }}
