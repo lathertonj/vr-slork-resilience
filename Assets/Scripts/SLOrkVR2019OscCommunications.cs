@@ -5,8 +5,10 @@ using Valve.VR;
 
 public class SLOrkVR2019OscCommunications : MonoBehaviour
 {
-    public SteamVR_Input_Sources handType; // 1
-    public SteamVR_Action_Boolean advanceToNextPartAction; // 2
+    public SteamVR_Input_Sources handType;
+    
+    public SteamVR_Action_Boolean advanceToNextPartAction;
+    
 
     private OSCSendReceiver myOSC;
     private ChuckSubInstance myChuck;
@@ -102,6 +104,11 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     {
         // part 1: advertise the next note   
         myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
+            // establish some globals early on
+            global float wavingHandIntensity;
+            global Event wavingHandOn;
+            global Event wavingHandOff;
+
             [{0}] @=> int myArpeggio[];
             [[{1}], [{2}]] @=> int myAhhNotes[][];
             [[{5}], [{6}]] @=> int mySawNotes[][];
@@ -239,6 +246,48 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
         
         // regular modal clock, to be used in part 2
         myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
+            global float wavingHandIntensity;
+            global Event wavingHandOn;
+            global Event wavingHandOff;
+
+            fun void RespondToWavingHand()
+            {{
+                1 => int currentChord;
+                while( true )
+                {{
+                    wavingHandOn => now;
+                    // switch chords locally
+                    !currentChord => currentChord;
+                    // inform performers to switch chords to currentChord
+                    for( int i; i < vrSays.size(); i++ )
+                    {{
+                        vrSays[ i ].startMsg( ""/part2/switchChord"", ""i"" );
+                        vrSays[ i ].addInt( currentChord );
+                    }}
+
+                    // inform performers of specific intensity
+                    spork ~ InformOfWavingHandIntensity() @=> Shred intensity;
+
+                    wavingHandOff => now;
+                    intensity.exit();
+                }}
+            }}
+            spork ~ RespondToWavingHand();
+
+            fun void InformOfWavingHandIntensity()
+            {{
+                while( true ) 
+                {{
+                    for( int i; i < vrSays.size(); i++ )
+                    {{
+                        vrSays[ i ].startMsg( ""/part2/chordBaselineIntensity"", ""f"" );
+                        vrSays[ i ].addFloat( wavingHandIntensity );
+                    }}
+                    20::ms => now;
+                }}
+            }}
+            
+            
             [{0}] @=> int myArpeggio[];
             0 => int currentReceiver;
 
