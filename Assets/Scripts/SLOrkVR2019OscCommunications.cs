@@ -81,30 +81,30 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             nextMovementToInit++;
         }
 
-        if( Input.GetKeyDown( "1" ) )
-        {
-            myChuck.SetFloat( "part2DistortionAmount", 0.0 );
-        }
-        if( Input.GetKeyDown( "2" ) )
-        {
-            myChuck.SetFloat( "part2DistortionAmount", 0.25 );
-        }
-        if( Input.GetKeyDown( "3" ) )
-        {
-            myChuck.SetFloat( "part2DistortionAmount", 0.5 );
-        }
-        if( Input.GetKeyDown( "4" ) )
-        {
-            myChuck.SetFloat( "part2DistortionAmount", 0.75 );
-        }
-        if( Input.GetKeyDown( "5" ) )
-        {
-            myChuck.SetFloat( "part2DistortionAmount", 1.0 );
-        }
-        if( Input.GetKeyDown( "6" ) )
-        {
-            myChuck.BroadcastEvent( "part2bChords" );
-        }
+        // if( Input.GetKeyDown( "1" ) )
+        // {
+        //     myChuck.SetFloat( "part2DistortionAmount", 0.0 );
+        // }
+        // if( Input.GetKeyDown( "2" ) )
+        // {
+        //     myChuck.SetFloat( "part2DistortionAmount", 0.25 );
+        // }
+        // if( Input.GetKeyDown( "3" ) )
+        // {
+        //     myChuck.SetFloat( "part2DistortionAmount", 0.5 );
+        // }
+        // if( Input.GetKeyDown( "4" ) )
+        // {
+        //     myChuck.SetFloat( "part2DistortionAmount", 0.75 );
+        // }
+        // if( Input.GetKeyDown( "5" ) )
+        // {
+        //     myChuck.SetFloat( "part2DistortionAmount", 1.0 );
+        // }
+        // if( Input.GetKeyDown( "6" ) )
+        // {
+        //     myChuck.BroadcastEvent( "part2bChords" );
+        // }
         if( Input.GetKeyDown( "'" ) )
         {
             myChuck.BroadcastEvent( "part3Raindrop" );
@@ -142,6 +142,13 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
         // increase distortion
         myChuck.SetFloat( "part2DistortionAmount", ( (float)nextLightningToPlay ).MapClamp( 0, lightningFiles.Length - 3, 0.2f, 1 ) );
+
+        // switch to the next chords on the third lightning
+        if( nextLightningToPlay >= 2 )
+        {
+            myChuck.BroadcastEvent( "part2bChords" );
+        }
+
 
         // play it
         if( !shouldAdvanceToPart3 )
