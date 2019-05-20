@@ -352,6 +352,8 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
             true => int hardPick;
 
+
+            global Event part2SeedlingNotePlayed;
             fun void SendTempoEvents()
             {{
                 while( true )
@@ -370,6 +372,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                         // find next receiver
                         currentReceiver++;
                         currentReceiver % vrSays.size() => currentReceiver;
+
+                        // say to the animation
+                        part2SeedlingNotePlayed.broadcast();
 
                         // wait
                         noteLength => now;

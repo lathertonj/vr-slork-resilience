@@ -13,7 +13,10 @@ public class TurnOffGravityOnFirstCollision : MonoBehaviour
 
     void OnCollisionEnter( Collision c ) 
     {
-        myRB.useGravity = false;
-        Destroy( this );
+        if( c.gameObject.CompareTag( "Ground" ) )
+        {
+            myRB.useGravity = false;
+            Destroy( this );
+        }
     }
 }

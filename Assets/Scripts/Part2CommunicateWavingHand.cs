@@ -15,6 +15,7 @@ public class Part2CommunicateWavingHand : MonoBehaviour
     public float maxRoomSpeed;
     public float slowSpeedNormCutoff;
     public float fastSpeedNormCutoff;
+    public static Vector3 mostRecentGestureDirection;
 
     void Start()
     {
@@ -44,9 +45,13 @@ public class Part2CommunicateWavingHand : MonoBehaviour
             theChuck.SetFloat( "wavingHandIntensity", 0 );
 
             // move the room
-            Vector3 v = GetVelocity().normalized;
+            // get gesture direction in world space
+            Vector3 v = room.transform.TransformDirection( GetVelocity().normalized );
             float magnitude = NormVelocityMagnitude();
             room.SetDirection( v, magnitude * maxRoomSpeed );
+
+            // save it for others. yay hackiness
+            mostRecentGestureDirection = v * magnitude;
 
             // tell chuck more things
             if( magnitude < slowSpeedNormCutoff )
