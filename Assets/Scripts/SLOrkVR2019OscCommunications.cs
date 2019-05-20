@@ -316,7 +316,40 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             spork ~ SendDistortionAmount();
 
             // TODO: timing based on VR
-            0.21 => global float noteLengthSeconds;
+            0.4::second => dur noteLength;
+            0.5::second => dur maxNoteLength;
+            0.21::second => dur minNoteLength;
+
+            fun void ListenForDecreaseEvents()
+            {{
+                global Event part2DecreaseTempo;
+                while( true )
+                {{
+                    part2DecreaseTempo => now;
+                    1.08 *=> noteLength;
+                    if( noteLength > maxNoteLength )
+                    {{
+                        maxNoteLength => noteLength;
+                    }}
+                }}
+            }}
+            spork ~ ListenForDecreaseEvents();
+
+            fun void ListenForIncreaseEvents()
+            {{
+                global Event part2IncreaseTempo;
+                while( true )
+                {{
+                    part2IncreaseTempo => now;
+                    0.94 *=> noteLength;
+                    if( noteLength < minNoteLength )
+                    {{
+                        minNoteLength => noteLength;
+                    }}
+                }}
+            }}
+            spork ~ ListenForIncreaseEvents();
+
             true => int hardPick;
 
             fun void SendTempoEvents()
@@ -339,7 +372,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                         currentReceiver % vrSays.size() => currentReceiver;
 
                         // wait
-                        noteLengthSeconds::second => now;
+                        noteLength => now;
                     }}
                 }}
             }}
