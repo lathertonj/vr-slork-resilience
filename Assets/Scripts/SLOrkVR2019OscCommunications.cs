@@ -533,6 +533,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             }}
             spork ~ ListenForWindExcitation();
 
+            global Event part3SeedlingNotePlayed;
             fun void ListenForPlayedNotes()
             {{
                 vrHear.event( ""/part3/playedSadSeedlingNote"", ""i"" ) @=> OscEvent someonePlayedANote;
@@ -546,6 +547,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                         someonePlayedANote.getInt();
 
                         ( myCurrentNote + 1 ) % myArpeggio.size() => myCurrentNote;
+
+                        // send message up as well
+                        part3SeedlingNotePlayed.broadcast();
                     }}
                 }}
             }}
