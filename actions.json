@@ -16,6 +16,11 @@
       "requirement": "mandatory"
     },
     {
+      "name": "/actions/slork2019/in/PlayLightning",
+      "type": "boolean",
+      "requirement": "mandatory"
+    },
+    {
       "name": "/actions/slork2019/out/Haptic",
       "type": "vibration",
       "requirement": "mandatory"

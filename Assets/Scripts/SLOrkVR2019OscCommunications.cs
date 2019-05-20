@@ -8,6 +8,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     public SteamVR_Input_Sources handType;
     
     public SteamVR_Action_Boolean advanceToNextPartAction;
+    public SteamVR_Action_Boolean playLightningAction;
     
 
     private OSCSendReceiver myOSC;
@@ -32,7 +33,10 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     public string[] mySawNotesPart3a2;
     public string[] myArpeggioPart3a;
     public string[] myArpeggioPart3b;
+    public string[] lightningFiles;
     int nextMovementToInit = 1;
+    int nextLightningToPlay = 0;
+    bool overIsland = false;
 
     // Start is called before the first frame update
     void Start()
@@ -45,6 +49,11 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     {
         // application button or space bar
         return advanceToNextPartAction.GetStateDown( handType ) || Input.GetKeyDown( "space" ) ;
+    }
+
+    bool ShouldPlayLightning()
+    {
+        return playLightningAction.GetStateDown( handType );
     }
 
     // Update is called once per frame
@@ -98,6 +107,44 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             myChuck.BroadcastEvent( "part3Raindrop" );
         }
 
+        if( ShouldPlayLightning() )
+        {
+            PlayChuckLightning();
+        }
+
+    }
+
+    void PlayChuckLightning()
+    {
+        // pick which lightning file to play
+        // TODO: check whether we are over the island
+        if( nextLightningToPlay >= lightningFiles.Length - 2 )
+        {
+            if( overIsland )
+            {
+                // TODO: transition to movement 3!
+                // TODO: whether to use the very last lightning file?
+            }
+            else
+            {
+                // TODO: pick a random one instead?
+                nextLightningToPlay = lightningFiles.Length - 4;
+            }
+        }
+
+        // increase distortion
+        myChuck.SetFloat( "part2DistortionAmount", ( (float) nextLightningToPlay ).MapClamp( 0, lightningFiles.Length - 3 , 0, 1 ) );
+
+        // play it
+        myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
+            Math.random2( 0, vrSays.size() - 1 ) => int which;
+            vrSays[which].startMsg( ""/playLightning"", ""s"" );
+            vrSays[which].addString( ""{0}"" );
+            1::second => now;
+        ", lightningFiles[nextLightningToPlay] ) );
+
+        // remember for next time
+        nextLightningToPlay++;
     }
 
     void StartChuckPart1()
@@ -301,14 +348,17 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             }}
 
             global float part2DistortionAmount;
+            float currentDistortionAmount;
+            0.1 => float distortionAmountSlew;
             fun void SendDistortionAmount()
             {{
                 while( true )
                 {{
+                    distortionAmountSlew * ( part2DistortionAmount - currentDistortionAmount ) +=> currentDistortionAmount;
                     for( int i; i < vrSays.size(); i++ )
                     {{
                         vrSays[ i ].startMsg( ""/part2Distortion"", ""f"" );
-                        vrSays[ i ].addFloat( part2DistortionAmount );
+                        vrSays[ i ].addFloat( currentDistortionAmount );
                     }}
                     50::ms => now;
                 }}

@@ -23,6 +23,8 @@ namespace Valve.VR
         
         private static SteamVR_Action_Pose p_slork2019_Pose;
         
+        private static SteamVR_Action_Boolean p_slork2019_PlayLightning;
+        
         private static SteamVR_Action_Vibration p_slork2019_Haptic;
         
         public static SteamVR_Action_Boolean slork2019_ChargeWind
@@ -49,6 +51,14 @@ namespace Valve.VR
             }
         }
         
+        public static SteamVR_Action_Boolean slork2019_PlayLightning
+        {
+            get
+            {
+                return SteamVR_Actions.p_slork2019_PlayLightning.GetCopy<SteamVR_Action_Boolean>();
+            }
+        }
+        
         public static SteamVR_Action_Vibration slork2019_Haptic
         {
             get
@@ -63,11 +73,13 @@ namespace Valve.VR
                     SteamVR_Actions.slork2019_ChargeWind,
                     SteamVR_Actions.slork2019_AdvanceToNextPart,
                     SteamVR_Actions.slork2019_Pose,
+                    SteamVR_Actions.slork2019_PlayLightning,
                     SteamVR_Actions.slork2019_Haptic};
             Valve.VR.SteamVR_Input.actionsIn = new Valve.VR.ISteamVR_Action_In[] {
                     SteamVR_Actions.slork2019_ChargeWind,
                     SteamVR_Actions.slork2019_AdvanceToNextPart,
-                    SteamVR_Actions.slork2019_Pose};
+                    SteamVR_Actions.slork2019_Pose,
+                    SteamVR_Actions.slork2019_PlayLightning};
             Valve.VR.SteamVR_Input.actionsOut = new Valve.VR.ISteamVR_Action_Out[] {
                     SteamVR_Actions.slork2019_Haptic};
             Valve.VR.SteamVR_Input.actionsVibration = new Valve.VR.SteamVR_Action_Vibration[] {
@@ -76,14 +88,16 @@ namespace Valve.VR
                     SteamVR_Actions.slork2019_Pose};
             Valve.VR.SteamVR_Input.actionsBoolean = new Valve.VR.SteamVR_Action_Boolean[] {
                     SteamVR_Actions.slork2019_ChargeWind,
-                    SteamVR_Actions.slork2019_AdvanceToNextPart};
+                    SteamVR_Actions.slork2019_AdvanceToNextPart,
+                    SteamVR_Actions.slork2019_PlayLightning};
             Valve.VR.SteamVR_Input.actionsSingle = new Valve.VR.SteamVR_Action_Single[0];
             Valve.VR.SteamVR_Input.actionsVector2 = new Valve.VR.SteamVR_Action_Vector2[0];
             Valve.VR.SteamVR_Input.actionsVector3 = new Valve.VR.SteamVR_Action_Vector3[0];
             Valve.VR.SteamVR_Input.actionsSkeleton = new Valve.VR.SteamVR_Action_Skeleton[0];
             Valve.VR.SteamVR_Input.actionsNonPoseNonSkeletonIn = new Valve.VR.ISteamVR_Action_In[] {
                     SteamVR_Actions.slork2019_ChargeWind,
-                    SteamVR_Actions.slork2019_AdvanceToNextPart};
+                    SteamVR_Actions.slork2019_AdvanceToNextPart,
+                    SteamVR_Actions.slork2019_PlayLightning};
         }
         
         private static void PreInitActions()
@@ -91,6 +105,7 @@ namespace Valve.VR
             SteamVR_Actions.p_slork2019_ChargeWind = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/slork2019/in/ChargeWind")));
             SteamVR_Actions.p_slork2019_AdvanceToNextPart = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/slork2019/in/AdvanceToNextPart")));
             SteamVR_Actions.p_slork2019_Pose = ((SteamVR_Action_Pose)(SteamVR_Action.Create<SteamVR_Action_Pose>("/actions/slork2019/in/Pose")));
+            SteamVR_Actions.p_slork2019_PlayLightning = ((SteamVR_Action_Boolean)(SteamVR_Action.Create<SteamVR_Action_Boolean>("/actions/slork2019/in/PlayLightning")));
             SteamVR_Actions.p_slork2019_Haptic = ((SteamVR_Action_Vibration)(SteamVR_Action.Create<SteamVR_Action_Vibration>("/actions/slork2019/out/Haptic")));
         }
     }
