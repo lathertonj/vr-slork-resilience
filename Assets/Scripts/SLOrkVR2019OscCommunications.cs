@@ -242,6 +242,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     {
         // inform above code to change chords
         myChuck.BroadcastEvent( "startPart2" );
+
+        // turn on trail rendering
+        SlewFollower.trailsRendering = true;
         
         // regular modal clock, to be used in part 2
         myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
@@ -356,6 +359,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     {
         // inform above code to change chords
         myChuck.BroadcastEvent( "startPart3" );
+
+        // turn off trail rendering
+        SlewFollower.trailsRendering = false;
         
         // regular modal clock, to be used in part 3
         myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
