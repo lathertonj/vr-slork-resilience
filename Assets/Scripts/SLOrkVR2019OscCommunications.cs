@@ -6,10 +6,10 @@ using Valve.VR;
 public class SLOrkVR2019OscCommunications : MonoBehaviour
 {
     public SteamVR_Input_Sources handType;
-    
+
     public SteamVR_Action_Boolean advanceToNextPartAction;
     public SteamVR_Action_Boolean playLightningAction;
-    
+
 
     private OSCSendReceiver myOSC;
     private ChuckSubInstance myChuck;
@@ -42,7 +42,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        myChuck = GetComponent<ChuckSubInstance>();      
+        myChuck = GetComponent<ChuckSubInstance>();
         myOSC = GetComponent<OSCSendReceiver>();
         myLightningVisuals = GetComponent<LightningVisuals>();
     }
@@ -50,7 +50,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     bool ShouldAdvanceToNextPart()
     {
         // application button or space bar
-        return advanceToNextPartAction.GetStateDown( handType ) || Input.GetKeyDown( "space" ) ;
+        return advanceToNextPartAction.GetStateDown( handType ) || Input.GetKeyDown( "space" );
     }
 
     bool ShouldPlayLightning()
@@ -72,7 +72,8 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                     StartChuckPart2();
                     break;
                 case 3:
-                    StartChuckPart3();
+                    // StartChuckPart3();
+                    Debug.Log( "NOTE: advancing to part 3 via button is disabled!" );
                     break;
                 default:
                     break;
@@ -111,45 +112,76 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
         if( ShouldPlayLightning() )
         {
-            PlayChuckLightning();
+            PlayChuckLightning( false );
         }
 
     }
 
-    void PlayChuckLightning()
+    private void PlayChuckLightning( bool isFinalLightning )
     {
+        // something we might have to do at the end of this function
+        bool shouldAdvanceToPart3 = false;
+
         // pick which lightning file to play
-        // TODO: check whether we are over the island
-        if( nextLightningToPlay >= lightningFiles.Length - 2 )
+        if( isFinalLightning )
         {
-            if( overIsland )
-            {
-                // TODO: transition to movement 3!
-                // TODO: whether to use the very last lightning file?
-            }
-            else
-            {
-                // TODO: pick a random one instead?
-                nextLightningToPlay = lightningFiles.Length - 4;
-            }
+            // make sure (TODO: -1 or -2?)
+            nextLightningToPlay = lightningFiles.Length - 2;
+
+            // TODO: play it out of more than one station?
+
+            // transition to movement 3!
+            shouldAdvanceToPart3 = true;
+        }
+        else if( nextLightningToPlay >= lightningFiles.Length - 2 )
+        {
+            // we used too many lightning files.
+            // TODO: pick a random one instead?
+            nextLightningToPlay = lightningFiles.Length - 4;
         }
 
         // increase distortion
-        myChuck.SetFloat( "part2DistortionAmount", ( (float) nextLightningToPlay ).MapClamp( 0, lightningFiles.Length - 3 , 0.2f, 1 ) );
+        myChuck.SetFloat( "part2DistortionAmount", ( (float)nextLightningToPlay ).MapClamp( 0, lightningFiles.Length - 3, 0.2f, 1 ) );
 
         // play it
-        myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
-            Math.random2( 0, vrSays.size() - 1 ) => int which;
-            vrSays[which].startMsg( ""/playLightning"", ""s"" );
-            vrSays[which].addString( ""{0}"" );
-            1::second => now;
-        ", lightningFiles[nextLightningToPlay] ) );
+        if( !shouldAdvanceToPart3 )
+        {
+            myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
+                Math.random2( 0, vrSays.size() - 1 ) => int which;
+                vrSays[which].startMsg( ""/playLightning"", ""s"" );
+                vrSays[which].addString( ""{0}"" );
+                1::second => now;
+            ", lightningFiles[nextLightningToPlay] ) );
+        }
+        else
+        {
+            // final one: play out of all of the hemis
+            myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
+                for( int i; i < vrSays.size(); i++ )
+                {{
+                    vrSays[i].startMsg( ""/playLightning"", ""s"" );
+                    vrSays[i].addString( ""{0}"" );
+                }}
+                1::second => now;
+            ", lightningFiles[nextLightningToPlay] ) );
+        }
 
         // do the visuals
-        myLightningVisuals.TriggerLightning( ( (float) nextLightningToPlay ).MapClamp( 0, lightningFiles.Length - 2 , 0.3f, 1 ) );
+        myLightningVisuals.TriggerLightning( ( (float)nextLightningToPlay ).MapClamp( 0, lightningFiles.Length - 2, 0.3f, 1 ) );
 
         // remember for next time
         nextLightningToPlay++;
+
+        // advance to next part?
+        if( shouldAdvanceToPart3 )
+        {
+            StartChuckPart3();
+        }
+    }
+
+    public void PlayFinalChuckLightning()
+    {
+        PlayChuckLightning( true );
     }
 
     void StartChuckPart1()
@@ -271,8 +303,8 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                 }}
                 10::ms => now;
             }}
-        ", 
-            string.Join( ", ", myModalNotesPart1 ), 
+        ",
+            string.Join( ", ", myModalNotesPart1 ),
             string.Join( ", ", myAhhNotesPart1a1 ),
             string.Join( ", ", myAhhNotesPart1a2 ),
             string.Join( ", ", myAhhNotesPart2a1 ),
@@ -297,7 +329,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
         // turn on trail rendering
         SlewFollower.trailsRendering = true;
-        
+
         // regular modal clock, to be used in part 2
         myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
             global float wavingHandIntensity;
@@ -443,9 +475,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             part2TempoEvents.exit();
 
         ", string.Join( ", ", myArpeggioPart2a ) ) );
-        
 
-        
+
+
     }
 
     void StartChuckPart3()
@@ -455,7 +487,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
         // turn off trail rendering
         SlewFollower.trailsRendering = false;
-        
+
         // regular modal clock, to be used in part 3
         myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
             [{0}] @=> int myArpeggio[];
@@ -562,12 +594,12 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                 10::ms => now;
             }}
             
-        ", 
+        ",
             string.Join( ", ", myArpeggioPart3a ),
             string.Join( ", ", mySawNotesPart3a1 ),
             string.Join( ", ", mySawNotesPart3a2 ),
             string.Join( ", ", myArpeggioPart3b )
-        ) ) ;
+        ) );
         // TODO replace arpeggio
     }
 }

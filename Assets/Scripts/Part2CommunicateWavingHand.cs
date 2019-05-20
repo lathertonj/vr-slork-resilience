@@ -79,6 +79,16 @@ public class Part2CommunicateWavingHand : MonoBehaviour
                 theChuck.BroadcastEvent( "part2IncreaseTempo" );
             }
         }
+
+        if( headingTowardOverrideLocation && CloseToOverrideLocation() )
+        {
+            room.GetComponent<Part23MoveRoom>().TransitionFromPart2To3();
+        }
+    }
+
+    private bool CloseToOverrideLocation()
+    {
+        return ( room.transform.position - overrideGestureLocation.position ).magnitude < 0.1f;
     }
 
     private Vector3 GetVelocity()
