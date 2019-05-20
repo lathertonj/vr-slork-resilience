@@ -13,6 +13,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
     private OSCSendReceiver myOSC;
     private ChuckSubInstance myChuck;
+    private LightningVisuals myLightningVisuals;
 
     public string[] myModalNotesPart1;
     public string[] myAhhNotesPart1a1;
@@ -43,6 +44,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     {
         myChuck = GetComponent<ChuckSubInstance>();      
         myOSC = GetComponent<OSCSendReceiver>();
+        myLightningVisuals = GetComponent<LightningVisuals>();
     }
 
     bool ShouldAdvanceToNextPart()
@@ -133,7 +135,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
         }
 
         // increase distortion
-        myChuck.SetFloat( "part2DistortionAmount", ( (float) nextLightningToPlay ).MapClamp( 0, lightningFiles.Length - 3 , 0, 1 ) );
+        myChuck.SetFloat( "part2DistortionAmount", ( (float) nextLightningToPlay ).MapClamp( 0, lightningFiles.Length - 3 , 0.2f, 1 ) );
 
         // play it
         myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
@@ -142,6 +144,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             vrSays[which].addString( ""{0}"" );
             1::second => now;
         ", lightningFiles[nextLightningToPlay] ) );
+
+        // do the visuals
+        myLightningVisuals.TriggerLightning( ( (float) nextLightningToPlay ).MapClamp( 0, lightningFiles.Length - 2 , 0.3f, 1 ) );
 
         // remember for next time
         nextLightningToPlay++;
