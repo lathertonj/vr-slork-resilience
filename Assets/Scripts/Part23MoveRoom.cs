@@ -40,6 +40,9 @@ public class Part23MoveRoom : MonoBehaviour
         // decrease gravity LATER for seedlings to look different?
         Invoke( "DecreaseGravity", 3.5f );
 
+        // start raining LATER
+        Invoke( "StartRaining", 4f );
+
         // tell the chuck controller to move on
         theChucker.PlayFinalChuckLightning();
 
@@ -63,5 +66,12 @@ public class Part23MoveRoom : MonoBehaviour
     private void DecreaseGravity()
     {
         Physics.gravity = -3f * Vector3.up;
+    }
+
+    public ParticleSystem rain;
+
+    private void StartRaining()
+    {
+        rain.Play();
     }
 }

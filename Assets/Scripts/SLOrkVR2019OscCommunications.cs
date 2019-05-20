@@ -105,16 +105,21 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
         // {
         //     myChuck.BroadcastEvent( "part2bChords" );
         // }
-        if( Input.GetKeyDown( "'" ) )
-        {
-            myChuck.BroadcastEvent( "part3Raindrop" );
-        }
+        // if( Input.GetKeyDown( "'" ) )
+        // {
+        //     myChuck.BroadcastEvent( "part3Raindrop" );
+        // }
 
         if( ShouldPlayLightning() )
         {
             PlayChuckLightning( false );
         }
 
+    }
+
+    public void PlayRaindrop()
+    {
+        myChuck.BroadcastEvent( "part3Raindrop" );
     }
 
     private void PlayChuckLightning( bool isFinalLightning )
