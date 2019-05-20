@@ -108,6 +108,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             global float wavingHandIntensity;
             global Event wavingHandOn;
             global Event wavingHandOff;
+            global Event startPart2, startPart3;
 
             [{0}] @=> int myArpeggio[];
             [[{1}], [{2}]] @=> int myAhhNotes[][];
@@ -160,7 +161,6 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
             fun void ReplaceAhhNotesForPart2()
             {{
-                global Event startPart2;
                 startPart2 => now;
                 [[{3}], [{4}]] @=> myAhhNotes;
             }}
@@ -175,7 +175,6 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             }}
             spork ~ ReplaceNotesForPart2b();
 
-            global Event startPart3;
             fun void ReplaceNotesForPart3()
             {{
                 startPart3 => now;

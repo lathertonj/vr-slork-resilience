@@ -12,6 +12,7 @@ public class Part1MoveRoom : MonoBehaviour
     void Start()
     {
         gameObject.AddComponent<ChuckEventListener>().ListenForEvent( theChuck, "part1SeedlingNotePlayed", RespondToSeedlingLaunch );
+        gameObject.AddComponent<ChuckEventListener>().ListenForEvent( theChuck, "startPart2", RespondToStartPart2 );
         currentLocation = goalLocation = transform.position;
     }
 
@@ -29,5 +30,11 @@ public class Part1MoveRoom : MonoBehaviour
     {
         currentLocation += locationSlew * Time.deltaTime * ( goalLocation - currentLocation );
         transform.position = currentLocation;
+    }
+
+    void RespondToStartPart2()
+    {
+        // turn off part 1 movement mechanism at the start of part 2
+        Destroy( this );
     }
 }
