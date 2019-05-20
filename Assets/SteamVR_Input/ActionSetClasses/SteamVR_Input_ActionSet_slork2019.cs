@@ -49,6 +49,14 @@ namespace Valve.VR
             }
         }
         
+        public virtual SteamVR_Action_Boolean OverrideWindToPlotLocation
+        {
+            get
+            {
+                return SteamVR_Actions.slork2019_OverrideWindToPlotLocation;
+            }
+        }
+        
         public virtual SteamVR_Action_Vibration Haptic
         {
             get

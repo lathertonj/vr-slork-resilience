@@ -87,7 +87,7 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/slork2019/in/chargewind"
+                     "output" : "/actions/slork2019/in/overridewindtoplotlocation"
                   }
                },
                "mode" : "button",
@@ -96,7 +96,7 @@
             {
                "inputs" : {
                   "click" : {
-                     "output" : "/actions/slork2019/in/chargewind"
+                     "output" : "/actions/slork2019/in/overridewindtoplotlocation"
                   }
                },
                "mode" : "button",

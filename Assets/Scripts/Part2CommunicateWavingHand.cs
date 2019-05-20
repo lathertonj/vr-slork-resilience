@@ -7,6 +7,9 @@ public class Part2CommunicateWavingHand : MonoBehaviour
 {
 
     public SteamVR_Action_Boolean holdWindGestureAction;
+    public SteamVR_Action_Boolean overrideGestureAction;
+    public SteamVR_Input_Sources overrideHandType;
+    
     private SteamVR_Input_Sources handType;
     private SteamVR_Behaviour_Pose pose;
     public ChuckSubInstance theChuck;
@@ -16,6 +19,8 @@ public class Part2CommunicateWavingHand : MonoBehaviour
     public float slowSpeedNormCutoff;
     public float fastSpeedNormCutoff;
     public static Vector3 mostRecentGestureDirection;
+    public Transform overrideGestureLocation;
+    private bool headingTowardOverrideLocation = false;
 
     void Start()
     {
@@ -45,9 +50,20 @@ public class Part2CommunicateWavingHand : MonoBehaviour
             theChuck.SetFloat( "wavingHandIntensity", 0 );
 
             // move the room
-            // get gesture direction in world space
-            Vector3 v = room.transform.TransformDirection( GetVelocity().normalized );
+            Vector3 v = Vector3.zero;
             float magnitude = NormVelocityMagnitude();
+
+            if( !ShouldOverrideGesture() )
+            {
+                v = room.transform.TransformDirection( GetVelocity().normalized );
+                headingTowardOverrideLocation = false;
+            }
+            else
+            {
+                v = ( overrideGestureLocation.position - room.transform.position ).normalized;
+                headingTowardOverrideLocation = true;
+            }
+            // get gesture direction in world space
             room.SetDirection( v, magnitude * maxRoomSpeed );
 
             // save it for others. yay hackiness
@@ -88,5 +104,10 @@ public class Part2CommunicateWavingHand : MonoBehaviour
     bool IsUnheldDown()
     {
         return holdWindGestureAction.GetStateUp( handType );
+    }
+
+    bool ShouldOverrideGesture()
+    {
+        return overrideGestureAction.GetState( overrideHandType );
     }
 }
