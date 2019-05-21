@@ -558,7 +558,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
             global Event part3SwellPlayed;
             global int part3SwellID;
-            fun void ListenForPlayedNotes()
+            fun void ListenForPlayedSwells()
             {{
                 vrHear.event( ""/part3/playedRainSwell"", ""i"" ) @=> OscEvent someonePlayedASwell;
 
@@ -569,13 +569,14 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                     {{
                         // argument is ID
                         someonePlayedASwell.getInt() => part3SwellID;
+                        <<< ""heard from the slork station that a swell happened"">>>;
 
                         // send message up as well
                         part3SwellPlayed.broadcast();
                     }}
                 }}
             }}
-            spork ~ ListenForPlayedNotes();
+            spork ~ ListenForPlayedSwells();
 
             // TODO: timing based on rain
             0.41 => global float noteLengthSeconds;
