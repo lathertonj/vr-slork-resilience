@@ -215,12 +215,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             global Event part1SeedlingNotePlayed;
             0.97 => float windDecay;
 
-            // advance to part 1
-            for( int i; i < vrSays.size(); i++ )
-            {{
-                vrSays[ i ].startMsg( ""/advanceToPart1"", ""i"" );
-                vrSays[ i ].addInt( 1 );
-            }}
+            1 => global int currentPart;
 
             fun void ListenForPlayedNotes()
             {{
@@ -283,6 +278,10 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             {{
                 for( int i; i < vrSays.size(); i++ )
                 {{
+                    // make sure we're all on same part 
+                    vrSays[ i ].startMsg( ""/currentPart"", ""i"" );
+                    vrSays[ i ].addInt( currentPart );    
+
                     // send out the next note someone should play
                     vrSays[i].startMsg( ""/part1/nextSeedlingNote"", ""f"" );
                     vrSays[i].addFloat( myArpeggio[myCurrentNote] );
@@ -348,6 +347,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             global Event wavingHandOn;
             global Event wavingHandOff;
 
+            // advance to part 2
+            2 => global int currentPart;
+
             fun void RespondToWavingHand()
             {{
                 1 => int currentChord;
@@ -389,13 +391,6 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             [{0}] @=> int myArpeggio[];
             0 => int currentReceiver;
 
-            // advance to part 2
-            for( int i; i < vrSays.size(); i++ )
-            {{
-                vrSays[ i ].startMsg( ""/advanceToPart2"", ""i"" );
-                vrSays[ i ].addInt( 1 );
-            }}
-
             global float part2DistortionAmount;
             float currentDistortionAmount;
             0.1 => float distortionAmountSlew;
@@ -414,7 +409,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             }}
             spork ~ SendDistortionAmount();
 
-            // TODO: timing based on VR
+            // timing based on VR
             0.4::second => dur noteLength;
             0.5::second => dur maxNoteLength;
             0.21::second => dur minNoteLength;
@@ -509,12 +504,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             0 => int currentReceiver;
             int myCurrentNote;
 
-            // advance to part 3
-            for( int i; i < vrSays.size(); i++ )
-            {{
-                vrSays[ i ].startMsg( ""/advanceToPart3"", ""i"" );
-                vrSays[ i ].addInt( 1 );
-            }}
+            3 => global int currentPart;
 
             global float currentWindExcitationPart3;
             0.97 => float windDecay;
