@@ -181,13 +181,15 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
         // increase distortion
         myChuck.SetFloat( "part2DistortionAmount", ( (float)nextLightningToPlay ).MapClamp( 0, lightningFiles.Length - 3, 0.2f, 1 ) );
 
-        // switch to the next chords on the third lightning
+        // switch to the next chords and visuals on the third lightning
         if( nextLightningToPlay >= 2  && !haveAdvancedToPart2b )
         {
             haveAdvancedToPart2b = true;
+
+            // chords
             myChuck.BroadcastEvent( "part2bChords" );
 
-            // also do visuals
+            // visuals
             SetColorsPart2b();
         }
 
