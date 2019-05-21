@@ -201,11 +201,11 @@ PrefabInstance:
     - target: {fileID: 2348914, guid: 4d293c8e162f3874b982baadd71153d2, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 1827324819}
+      objectReference: {fileID: 1053601728}
     - target: {fileID: 3380982, guid: 4d293c8e162f3874b982baadd71153d2, type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 1398479480}
+      objectReference: {fileID: 1731486710}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4d293c8e162f3874b982baadd71153d2, type: 3}
 --- !u!1 &254102741 stripped
@@ -1027,6 +1027,40 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1003798982}
   m_PrefabAsset: {fileID: 0}
+--- !u!21 &1053601728
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Sprites/Default
+  m_Shader: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AlphaTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - PixelSnap: 0
+    - _EnableExternalAlpha: 0
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &1163491155
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1118,7 +1152,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1221001610}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 57.6, y: 40, z: 46.88}
+  m_LocalPosition: {x: 57.6, y: 40, z: 43.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1270503633}
@@ -1301,7 +1335,67 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!43 &1398479480
+--- !u!1 &1439508789 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 159396, guid: 4d293c8e162f3874b982baadd71153d2,
+    type: 3}
+  m_PrefabInstance: {fileID: 254102740}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1439508792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1439508789}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d0a640ed0b2f04092005f74ff76ddf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  holdWindGestureAction:
+    actionPath: /actions/slork2019/in/ChargeWind
+    needsReinit: 0
+  overrideGestureAction:
+    actionPath: /actions/slork2019/in/OverrideWindToPlotLocation
+    needsReinit: 0
+  overrideHandType: 0
+  theChuck: {fileID: 802711942}
+  maxRoomSpeed: 3
+  slowSpeedNormCutoff: 0.33
+  fastSpeedNormCutoff: 0.66
+  overrideGestureLocation: {fileID: 1221001611}
+--- !u!1 &1609597515
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1609597516}
+  m_Layer: 0
+  m_Name: ORIGINALPOSITION
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1609597516
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1609597515}
+  m_LocalRotation: {x: -0, y: -0.15956128, z: -0, w: 0.98718804}
+  m_LocalPosition: {x: 130.2, y: 11.3, z: -148.9}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: -18.363, z: 0}
+--- !u!43 &1731486710
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1464,66 +1558,6 @@ Mesh:
     offset: 0
     size: 0
     path: 
---- !u!1 &1439508789 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 159396, guid: 4d293c8e162f3874b982baadd71153d2,
-    type: 3}
-  m_PrefabInstance: {fileID: 254102740}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1439508792
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1439508789}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56d0a640ed0b2f04092005f74ff76ddf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  holdWindGestureAction:
-    actionPath: /actions/slork2019/in/ChargeWind
-    needsReinit: 0
-  overrideGestureAction:
-    actionPath: /actions/slork2019/in/OverrideWindToPlotLocation
-    needsReinit: 0
-  overrideHandType: 0
-  theChuck: {fileID: 802711942}
-  maxRoomSpeed: 3
-  slowSpeedNormCutoff: 0.33
-  fastSpeedNormCutoff: 0.66
-  overrideGestureLocation: {fileID: 1221001611}
---- !u!1 &1609597515
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1609597516}
-  m_Layer: 0
-  m_Name: ORIGINALPOSITION
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1609597516
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1609597515}
-  m_LocalRotation: {x: -0, y: -0.15956128, z: -0, w: 0.98718804}
-  m_LocalPosition: {x: 130.2, y: 11.3, z: -148.9}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: -18.363, z: 0}
 --- !u!1 &1754305636
 GameObject:
   m_ObjectHideFlags: 0
@@ -6342,40 +6376,6 @@ MonoBehaviour:
   seedlingBurialColor: {r: 1, g: 0.65882355, b: 0.13333334, a: 0.30980393}
   seedlingBurialParticleStartSize: 3
   seedlingBurialParticleLifetime: 3
---- !u!21 &1827324819
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Sprites/Default
-  m_Shader: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _AlphaTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - PixelSnap: 0
-    - _EnableExternalAlpha: 0
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Flip: {r: 1, g: 1, b: 1, a: 1}
-    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &1858475405
 GameObject:
   m_ObjectHideFlags: 0
@@ -6449,10 +6449,10 @@ Terrain:
   serializedVersion: 4
   m_TerrainData: {fileID: 15600000, guid: 2a03a86dd23165e46875ecc7530bda46, type: 2}
   m_TreeDistance: 5000
-  m_TreeBillboardDistance: 17
-  m_TreeCrossFadeLength: 6
+  m_TreeBillboardDistance: 5
+  m_TreeCrossFadeLength: 200
   m_TreeMaximumFullLODCount: 235
-  m_DetailObjectDistance: 80
+  m_DetailObjectDistance: 36
   m_DetailObjectDensity: 1
   m_HeightmapPixelError: 5
   m_SplatMapDistance: 1000
