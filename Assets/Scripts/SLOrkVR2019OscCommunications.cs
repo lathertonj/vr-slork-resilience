@@ -45,6 +45,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
         myChuck = GetComponent<ChuckSubInstance>();
         myOSC = GetComponent<OSCSendReceiver>();
         myLightningVisuals = GetComponent<LightningVisuals>();
+
+        // disable visuals
+        SteamVR_Fade.Start( Color.black, 0 );
     }
 
     bool ShouldAdvanceToNextPart()
@@ -56,6 +59,34 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     bool ShouldPlayLightning()
     {
         return playLightningAction.GetStateDown( handType );
+    }
+
+    void SetColorsPart1()
+    {
+        UpdateTerrainTexture.Part1();
+        UpdateWaterTexture.Part1();
+        UpdateSkyTexture.Part1();
+    }
+
+    void SetColorsPart2a()
+    {
+        UpdateTerrainTexture.Part2a();
+        UpdateWaterTexture.Part2a();
+        UpdateSkyTexture.Part2a();
+    }
+
+    void SetColorsPart2b()
+    {
+        UpdateTerrainTexture.Part2b();
+        UpdateWaterTexture.Part2b();
+        UpdateSkyTexture.Part2b();
+    }
+
+    void SetColorsPart3()
+    {
+        UpdateTerrainTexture.Part3();
+        UpdateWaterTexture.Part3();
+        UpdateSkyTexture.Part3();
     }
 
     // Update is called once per frame
@@ -122,6 +153,8 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
         myChuck.BroadcastEvent( "part3Raindrop" );
     }
 
+    bool haveAdvancedToPart2b = false;
+
     private void PlayChuckLightning( bool isFinalLightning )
     {
         // something we might have to do at the end of this function
@@ -149,9 +182,13 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
         myChuck.SetFloat( "part2DistortionAmount", ( (float)nextLightningToPlay ).MapClamp( 0, lightningFiles.Length - 3, 0.2f, 1 ) );
 
         // switch to the next chords on the third lightning
-        if( nextLightningToPlay >= 2 )
+        if( nextLightningToPlay >= 2  && !haveAdvancedToPart2b )
         {
+            haveAdvancedToPart2b = true;
             myChuck.BroadcastEvent( "part2bChords" );
+
+            // also do visuals
+            SetColorsPart2b();
         }
 
 
@@ -197,7 +234,10 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     }
 
     void StartChuckPart1()
-    {
+    {   
+        // also do visuals
+        SetColorsPart1();
+
         // part 1: advertise the next note   
         myChuck.RunCode( myOSC.GenerateChucKCode( "vrSays", "vrHear" ) + string.Format( @"
             // establish some globals early on
@@ -335,6 +375,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
     void StartChuckPart2()
     {
+        // also do visuals
+        SetColorsPart2a();
+
         // inform above code to change chords
         myChuck.BroadcastEvent( "startPart2" );
 
@@ -489,6 +532,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
     void StartChuckPart3()
     {
+        // also do visuals
+        SetColorsPart3();
+
         // inform above code to change chords
         myChuck.BroadcastEvent( "startPart3" );
 
@@ -559,7 +605,6 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                     {{
                         // argument is ID
                         someonePlayedASwell.getInt() => part3SwellID;
-                        <<< ""heard from the slork station that a swell happened"">>>;
 
                         // send message up as well
                         part3SwellPlayed.broadcast();
