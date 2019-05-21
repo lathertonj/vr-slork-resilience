@@ -534,6 +534,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             spork ~ ListenForWindExcitation();
 
             global Event part3SeedlingNotePlayed;
+            global int part3JumpID;
             fun void ListenForPlayedNotes()
             {{
                 vrHear.event( ""/part3/playedSadSeedlingNote"", ""i"" ) @=> OscEvent someonePlayedANote;
@@ -543,13 +544,34 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                     someonePlayedANote => now;
                     while( someonePlayedANote.nextMsg() != 0 )
                     {{
-                        // ignore argument
-                        someonePlayedANote.getInt();
+                        // argument is ID
+                        someonePlayedANote.getInt() => part3JumpID;
 
                         ( myCurrentNote + 1 ) % myArpeggio.size() => myCurrentNote;
 
                         // send message up as well
                         part3SeedlingNotePlayed.broadcast();
+                    }}
+                }}
+            }}
+            spork ~ ListenForPlayedNotes();
+
+            global Event part3SwellPlayed;
+            global int part3SwellID;
+            fun void ListenForPlayedNotes()
+            {{
+                vrHear.event( ""/part3/playedRainSwell"", ""i"" ) @=> OscEvent someonePlayedASwell;
+
+                while( true )
+                {{
+                    someonePlayedASwell => now;
+                    while( someonePlayedASwell.nextMsg() != 0 )
+                    {{
+                        // argument is ID
+                        someonePlayedASwell.getInt() => part3SwellID;
+
+                        // send message up as well
+                        part3SwellPlayed.broadcast();
                     }}
                 }}
             }}

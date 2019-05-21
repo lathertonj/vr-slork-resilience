@@ -5,17 +5,44 @@ using UnityEngine;
 public class AnimateSeedlingsPart3 : MonoBehaviour
 {
     public ChuckSubInstance theChuck;
+	public OSCSendReceiver osc;
     private Rigidbody[] mySeedlings;
     private int currentSeedling = 0;
     private ParticleSystem myParticleEmitter;
+	private Chuck.IntCallback myJumpIDGetter, mySwellIDGetter;
+	private bool shouldLaunchASeedling = false, shouldBuryASeedling = false;
+	private int jumpSeedlingID = 0, burySeedlingID = 0;
 	public float upwardForce = 1.8f;
     // Start is called before the first frame update
     void Start()
     {
         mySeedlings = GetComponentsInChildren<Rigidbody>();
         myParticleEmitter = GetComponent<ParticleSystem>();
-        gameObject.AddComponent<ChuckEventListener>().ListenForEvent( theChuck, "part3SeedlingNotePlayed", LaunchASeedling );
+		myJumpIDGetter = new Chuck.IntCallback( StoreJumpID );
+        // for random sequential seedling launching
+		// gameObject.AddComponent<ChuckEventListener>().ListenForEvent( theChuck, "part3SeedlingNotePlayed", LaunchASeedling );
+		// for specific seedling launching
+		gameObject.AddComponent<ChuckEventListener>().ListenForEvent( theChuck, "part3SeedlingNotePlayed", RespondToSeedlingJump );
+
+		// for ID-based seedling launching
     }
+
+	void AnimateSeedlingJump()
+	{
+		currentSeedling = ( jumpSeedlingID + ( Random.Range( 0, 3 ) * osc.NumListeners() ) ) % mySeedlings.Length;
+		LaunchASeedling();
+	}
+
+	void StoreJumpID( long performerID )
+	{
+		jumpSeedlingID = (int) performerID;
+		shouldLaunchASeedling = true;
+	}
+
+	void RespondToSeedlingJump()
+	{
+		theChuck.GetInt( "part3JumpID", myJumpIDGetter );
+	}
 
     void LaunchASeedling()
     {
@@ -36,6 +63,21 @@ public class AnimateSeedlingsPart3 : MonoBehaviour
 
         currentSeedling++; currentSeedling %= mySeedlings.Length;
     }
+
+	void Update()
+	{
+		if( shouldLaunchASeedling )
+		{
+			shouldLaunchASeedling = false;
+			AnimateSeedlingJump();
+		}
+
+		if( shouldBuryASeedling )
+		{
+			shouldBuryASeedling = false;
+			// TODO: animate burial
+		}
+	}
 
     Vector3 RandomVector3()
 	{

@@ -64,6 +64,11 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
         return chuckCode;
     }
 
+    public int NumListeners()
+    {
+        return hosts.Count;
+    }
+
 
 
 
@@ -78,7 +83,7 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
     private Dictionary<string, Action<List<object>>> myOSCResponders;
     private Queue<Tuple<string, List<object>>> myOSCIncomingMessages;
     private string myIP = "";
-    private List< string> hosts;
+    private List< string > hosts;
 
 
     // init data structures
@@ -123,7 +128,7 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
         }
         else
         {
-            myIP = GetMyIP( "8.8.8.8" );
+           myIP = GetMyIP( "8.8.8.8" );
         }
 
 
@@ -149,8 +154,9 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
                 {{
                     for( int i; i < handshakes.size(); i++ )
                     {{
-                        handshakes[i].startMsg( ""/__serverIP__"", ""s"" );
+                        handshakes[i].startMsg( ""/__serverIP__"", ""s,i"" );
                         handshakes[i].addString( ""{0}"" );
+                        handshakes[i].addInt( i );
                     }}
                     1::second => now;
                 }}
