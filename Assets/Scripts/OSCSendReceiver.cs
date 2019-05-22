@@ -107,7 +107,7 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
                 mySenders[host] = new SharpOSC.UDPSender( host, OSCPort );
                 if( myIP == "" )
                 {
-                    myIP = GetMyIP( mySenders[host].Address );
+                    //myIP = GetMyIP( mySenders[host].Address );
                 }
             }
 
@@ -128,13 +128,13 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
         }
         else
         {
-           myIP = GetMyIP( "8.8.8.8" );
+           //myIP = GetMyIP( "8.8.8.8" );
         }
 
 
         // find my IP
-        Debug.Log( "my IP is " + myIP );
-        if( myIP == "" )
+        Debug.Log( "my IP is " + myManualIP );
+        if( myManualIP == "" )
         {
             Debug.Log( "uhh, what's my IP?" );
         }
@@ -161,7 +161,7 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
                     1::second => now;
                 }}
                 
-            ", myIP ) );
+            ", myManualIP ) );
         }
         else
         {
@@ -170,6 +170,8 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
             
     }
 
+    string myManualIP = "";
+
     List< string > FindHostnames()
     {
         List< string > hosts = new List< string >();
@@ -177,7 +179,10 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
         string line;
         System.IO.StreamReader file =   
             new System.IO.StreamReader( File.OpenRead( string.Format( 
-                "{0}/{1}", Application.streamingAssetsPath, hostListFile ) ) );  
+                "{0}/{1}", Application.streamingAssetsPath, hostListFile ) ) );
+
+        myManualIP = file.ReadLine();
+        Debug.Log( "myManualIP is " + myManualIP );  
         while( ( line = file.ReadLine() ) != null )  
         {  
             hosts.Add( line.Trim() );
@@ -192,18 +197,18 @@ public class OSCSendReceiver : MonoBehaviour, OSCTransmitter
         SendMessage( "/__serverIP__", myIP );
     }
 
-    string GetMyIP( string dummyAddress )
-    {
-        string localIP;
-        using( Socket socket = new Socket( AddressFamily.InterNetwork, SocketType.Dgram, 0 ) )
-        {
-            socket.Connect( dummyAddress, 65530 );
-            IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
-            localIP = endPoint.Address.ToString();
-        }
+    // string GetMyIP( string dummyAddress )
+    // {
+    //     string localIP;
+    //     using( Socket socket = new Socket( AddressFamily.InterNetwork, SocketType.Dgram, 0 ) )
+    //     {
+    //         socket.Connect( dummyAddress, 65530 );
+    //         IPEndPoint endPoint = socket.LocalEndPoint as IPEndPoint;
+    //         localIP = endPoint.Address.ToString();
+    //     }
 
-        return localIP;
-    }
+    //     return localIP;
+    // }
 
     void Update()
     {

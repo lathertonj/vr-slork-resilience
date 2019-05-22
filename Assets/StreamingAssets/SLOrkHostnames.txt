@@ -1,1 +1,4 @@
-vindaloo.local
+169.254.251.68
+jambalaya.local
+nachos.local
+omelet.local

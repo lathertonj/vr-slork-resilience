@@ -7,6 +7,7 @@ public class UpdateSkyTexture : MonoBehaviour
 {
     
     public Material part1, part2a, part2b, part3;
+    public Color color1, color2a, color2b, color3;
     public float skyFlashTime = 2f;
 
     private static UpdateSkyTexture me = null;
@@ -14,29 +15,31 @@ public class UpdateSkyTexture : MonoBehaviour
     public static void Part1()
     {
         me.SetMaterial( me.part1 );
+        me.FlashColor( me.color1 );
     }
 
     public static void Part2a()
     {
         me.SetMaterial( me.part2a );
+        me.FlashColor( me.color2a );
     }
 
     public static void Part2b()
     {
+        me.SetMaterial( me.part2b );
         // don't flash because lightning will be flashing
-        me.SetMaterial( me.part2b, false );
     }
 
     public static void Part3()
     {
+        me.SetMaterial( me.part3 );
         // don't flash because lightning will be flashing
-        me.SetMaterial( me.part3, false );
     }
 
     void Start()
     {
         me = this;
-        SetMaterial( part1, false );
+        SetMaterial( part1 );
     }
 
     void Update()
@@ -59,18 +62,18 @@ public class UpdateSkyTexture : MonoBehaviour
         }
     }
 
-    void SetMaterial( Material m, bool flashColor = true )
+    void SetMaterial( Material m )
     {
         // set sky color
         RenderSettings.skybox = m;
+    }
 
-        if( flashColor )
-        {
-            // do a flash of other color
-            SteamVR_Fade.Start( m.GetColor( "_Tint" ), 0 );
+    void FlashColor( Color c )
+    {
+        // do a flash of other color
+        SteamVR_Fade.Start( c, 0 );
 
-            // back to clear
-            SteamVR_Fade.Start( Color.clear, skyFlashTime );
-        }
+        // back to clear
+        SteamVR_Fade.Start( Color.clear, skyFlashTime );
     }
 }
