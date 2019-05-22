@@ -18,7 +18,7 @@ public class LightningVisuals : MonoBehaviour
     public void TriggerLightning( float intensity )
     {
         // clamp intensity
-        intensity = Mathf.Clamp01( intensity );
+        intensity = intensity.PowMapClamp( 0, 1, 0, 1, 1.8f );
 
         // trigger color immediately
         SteamVR_Fade.Start( new Color( lightningColor.r, lightningColor.g, lightningColor.b, intensity ), 0 );
