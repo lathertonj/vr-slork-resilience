@@ -304,8 +304,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   objectToFollow: {fileID: 5815606077422096538}
   slew: 0.95
-  oscillateAmount: {x: 0.0015, y: 0.0015, z: 0.0015}
-  oscillateRate: {x: 1, y: 1.5, z: 2}
+  oscillateAmount: {x: 0.01, y: 0.01, z: 0.01}
+  oscillateRate: {x: 0.5, y: 0.75, z: 1}
 --- !u!1 &1556865247965383220
 GameObject:
   m_ObjectHideFlags: 0
