@@ -411,6 +411,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                     {{
                         vrSays[ i ].startMsg( ""/part2/switchChord"", ""i"" );
                         vrSays[ i ].addInt( currentChord );
+
+                        vrSays[ i ].startMsg( ""/part2/okToMakeNoise"", ""i"" );
+                        vrSays[ i ].addInt( 1 );
                     }}
 
                     // inform performers of specific intensity
@@ -418,6 +421,12 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
                     wavingHandOff => now;
                     intensity.exit();
+
+                    for( int i; i < vrSays.size(); i++ )
+                    {{
+                        vrSays[ i ].startMsg( ""/part2/beSilentSoon"", ""i"" );
+                        vrSays[ i ].addInt( 3 );
+                    }}
                 }}
             }}
             spork ~ RespondToWavingHand();
