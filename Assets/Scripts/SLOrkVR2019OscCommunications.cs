@@ -18,6 +18,8 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     public string[] myModalNotesPart1;
     public string[] myAhhNotesPart1a1;
     public string[] myAhhNotesPart1a2;
+    public string[] mySawNotesPart1a1;
+    public string[] mySawNotesPart1a2;
 
     public string[] myArpeggioPart2a;
     public string[] myAhhNotesPart2a1;
@@ -245,7 +247,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
             [{0}] @=> int myArpeggio[];
             [[{1}], [{2}]] @=> int myAhhNotes[][];
-            [[{5}], [{6}]] @=> int mySawNotes[][];
+            [[{20}], [{21}]] @=> int mySawNotes[][];
             int myCurrentNote;
 
             global float currentWindExcitation;
@@ -323,6 +325,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             {{
                 startPart2 => now;
                 [[{3}], [{4}]] @=> myAhhNotes;
+                [[{5}], [{6}]] @=> mySawNotes;
             }}
             spork ~ ReplaceAhhNotesForPart2();
 
@@ -677,7 +680,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             string.Join( ", ", myArpeggioPart3a ),
             string.Join( ", ", mySawNotesPart3a1 ),
             string.Join( ", ", mySawNotesPart3a2 ),
-            string.Join( ", ", myArpeggioPart3b )
+            string.Join( ", ", myArpeggioPart3b ),
+            string.Join( ", ", mySawNotesPart1a1 ),
+            string.Join( ", ", mySawNotesPart1a2 )
         ) );
     }
 
