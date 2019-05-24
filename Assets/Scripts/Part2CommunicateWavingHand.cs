@@ -60,7 +60,9 @@ public class Part2CommunicateWavingHand : MonoBehaviour
             }
             else
             {
+                // override: go toward location, at top speed
                 v = ( overrideGestureLocation.position - room.transform.position ).normalized;
+                magnitude = 1;
                 headingTowardOverrideLocation = true;
             }
             // get gesture direction in world space
