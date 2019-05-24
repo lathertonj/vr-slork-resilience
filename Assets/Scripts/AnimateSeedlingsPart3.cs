@@ -7,18 +7,15 @@ public class AnimateSeedlingsPart3 : MonoBehaviour
     public ChuckSubInstance theChuck;
     public OSCSendReceiver osc;
     private Rigidbody[] mySeedlings;
-    private int currentSeedling = 0;
+    private int currentJumpSeedling = 0, currentBurySeedling = 0;
     private ParticleSystem myParticleEmitter;
-    private Chuck.IntCallback myJumpIDGetter, mySwellIDGetter;
-    private bool shouldLaunchASeedling = false, shouldBuryASeedling = false;
-    private int jumpSeedlingID = 0, burySeedlingID = 0;
     private bool[] haveSeedlingsBeenBuried;
     public float upwardForce = 1.8f;
-	public Vector3 seedlingBurialDistance;
-	public float seedlingBurialTime;
-	public Color seedlingBurialColor;
-	public float seedlingBurialParticleStartSize;
-	public float seedlingBurialParticleLifetime;
+    public Vector3 seedlingBurialDistance;
+    public float seedlingBurialTime;
+    public Color seedlingBurialColor;
+    public float seedlingBurialParticleStartSize;
+    public float seedlingBurialParticleLifetime;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,54 +24,90 @@ public class AnimateSeedlingsPart3 : MonoBehaviour
         for( int i = 0; i < haveSeedlingsBeenBuried.Length; i++ ) { haveSeedlingsBeenBuried[i] = false; }
 
         myParticleEmitter = GetComponent<ParticleSystem>();
-        myJumpIDGetter = new Chuck.IntCallback( StoreJumpID );
-        mySwellIDGetter = new Chuck.IntCallback( StoreSwellID );
 
         // for random sequential seedling launching
-        // gameObject.AddComponent<ChuckEventListener>().ListenForEvent( theChuck, "part3SeedlingNotePlayed", LaunchASeedling );
-        // for ID-based seedling launching
-        gameObject.AddComponent<ChuckEventListener>().ListenForEvent( theChuck, "part3SeedlingNotePlayed", RespondToSeedlingJump );
-        gameObject.AddComponent<ChuckEventListener>().ListenForEvent( theChuck, "part3SwellPlayed", RespondToSwell );
+        gameObject.AddComponent<ChuckEventListener>().ListenForEvent( theChuck, "part3SeedlingNotePlayed", LaunchASeedling );
+        gameObject.AddComponent<ChuckEventListener>().ListenForEvent( theChuck, "part3SwellPlayed", SwellASeedling );
     }
 
-    void AnimateSeedlingJump()
+    void AdvanceBurialIndexToSeedlingNotYetBuried()
     {
-        currentSeedling = ( jumpSeedlingID + ( Random.Range( 0, 3 ) * osc.NumListeners() ) ) % mySeedlings.Length;
-        LaunchASeedling();
+        int previousBurySeedling = currentBurySeedling;
+        for( int i = 1; i <= mySeedlings.Length; i++ )
+        {
+            int potentialNextSeedling = ( previousBurySeedling + i ) % mySeedlings.Length;
+            if( !haveSeedlingsBeenBuried[potentialNextSeedling] )
+            {
+                currentBurySeedling = potentialNextSeedling;
+                return;
+            }
+        }
+
+        // if none exist, find a buried one instead
+        AdvanceBurialIndexToBuriedSeedling();
     }
 
-    void AnimateSwell()
+    void AdvanceBurialIndexToBuriedSeedling()
     {
-        int whichSeedling = ( jumpSeedlingID + ( Random.Range( 0, 3 ) * osc.NumListeners() ) ) % mySeedlings.Length;
-        BuryASeedling( whichSeedling );
+        int previousBurySeedling = currentBurySeedling;
+        for( int i = 1; i <= mySeedlings.Length; i++ )
+        {
+            int potentialNextSeedling = ( previousBurySeedling + i ) % mySeedlings.Length;
+            if( haveSeedlingsBeenBuried[potentialNextSeedling] )
+            {
+                currentBurySeedling = potentialNextSeedling;
+                return;
+            }
+        }
+
+        // if none exist, find an unburied one instead
+        AdvanceBurialIndexToSeedlingNotYetBuried();
     }
 
-    void StoreJumpID( long performerID )
+    void AdvanceJumpIndexToUnburiedSeedling()
     {
-        jumpSeedlingID = (int)performerID;
-        shouldLaunchASeedling = true;
+        int previousSeedling = currentJumpSeedling;
+        for( int i = 1; i <= mySeedlings.Length; i++ )
+        {
+            int potentialNextSeedling = ( previousSeedling + i ) % mySeedlings.Length;
+            if( !haveSeedlingsBeenBuried[potentialNextSeedling] )
+            {
+                currentJumpSeedling = potentialNextSeedling;
+                return;
+            }
+        }
+
+        // if none exist, should choose -1 instead; will stop animating jumps
+        currentJumpSeedling = -1;
     }
 
-    void StoreSwellID( long performerID )
+    void SwellASeedling()
     {
-        burySeedlingID = (int)performerID;
-        shouldBuryASeedling = true;
+        // TODO: dial frequency up or down depending on rehearsal
+        if( Random.Range( 0f, 1f ) < 0.45f )
+        {
+            // X% of time, bury a new seedling
+            AdvanceBurialIndexToSeedlingNotYetBuried();
+        }
+        else 
+        {
+            // Rest of time, swell an old seedling
+            AdvanceBurialIndexToBuriedSeedling();
+        }
+
+        BuryASeedling( currentBurySeedling );
     }
 
-    void RespondToSeedlingJump()
-    {
-        theChuck.GetInt( "part3JumpID", myJumpIDGetter );
-    }
 
-    void RespondToSwell()
-    {
-        theChuck.GetInt( "part3SwellID", mySwellIDGetter );
-    }
 
     void LaunchASeedling()
     {
-        // TODO: don't do anything if this seedling has been buried already
-        Rigidbody seedling = mySeedlings[currentSeedling];
+        if( currentJumpSeedling < 0 )
+        {
+            return;
+        }
+
+        Rigidbody seedling = mySeedlings[currentJumpSeedling];
 
         Vector3 seedlingVelocity = upwardForce * Vector3.up + 0.02f * RandomVector3();
         seedling.AddForce( seedlingVelocity, ForceMode.VelocityChange );
@@ -89,47 +122,32 @@ public class AnimateSeedlingsPart3 : MonoBehaviour
         emitParams.velocity = seedlingVelocity; // take only the y component?
         myParticleEmitter.Emit( emitParams, count: 1 );
 
-        currentSeedling++; currentSeedling %= mySeedlings.Length;
+        AdvanceJumpIndexToUnburiedSeedling();
     }
 
     void BuryASeedling( int whichSeedling )
     {
         // first check if seedling has been buried already and if so, ONLY play the particle
-		Rigidbody seedling = mySeedlings[ whichSeedling ];
-		if( !haveSeedlingsBeenBuried[ whichSeedling] )
-		{
-			// burial action: rigidbody is kinematic; move down X in Y seconds
-			seedling.isKinematic = true;
-			seedling.useGravity = false;
-			StartCoroutine( MoveToPosition( seedling.transform, seedlingBurialDistance, seedlingBurialTime ) );
+        Rigidbody seedling = mySeedlings[whichSeedling];
+        if( !haveSeedlingsBeenBuried[whichSeedling] )
+        {
+            // burial action: rigidbody is kinematic; move down X in Y seconds
+            seedling.isKinematic = true;
+            seedling.useGravity = false;
+            StartCoroutine( MoveToPosition( seedling.transform, seedlingBurialDistance, seedlingBurialTime ) );
 
-			// remember
-			haveSeedlingsBeenBuried[ whichSeedling ] = true;
-		}
+            // remember
+            haveSeedlingsBeenBuried[whichSeedling] = true;
+        }
 
-		// always: emit particle
+        // always: emit particle
         ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams();
         emitParams.position = myParticleEmitter.transform.InverseTransformPoint( seedling.position );
         emitParams.velocity = 0.05f * Vector3.up;
-		emitParams.startSize = seedlingBurialParticleStartSize;
-		emitParams.startColor = seedlingBurialColor;
-		emitParams.startLifetime = seedlingBurialParticleLifetime;
+        emitParams.startSize = seedlingBurialParticleStartSize;
+        emitParams.startColor = seedlingBurialColor;
+        emitParams.startLifetime = seedlingBurialParticleLifetime;
         myParticleEmitter.Emit( emitParams, count: 1 );
-    }
-
-    void Update()
-    {
-        if( shouldLaunchASeedling )
-        {
-            shouldLaunchASeedling = false;
-            AnimateSeedlingJump();
-        }
-
-        if( shouldBuryASeedling )
-        {
-            shouldBuryASeedling = false;
-            AnimateSwell();
-        }
     }
 
     public IEnumerator MoveToPosition( Transform seedling, Vector3 relativePosition, float timeToMove )
