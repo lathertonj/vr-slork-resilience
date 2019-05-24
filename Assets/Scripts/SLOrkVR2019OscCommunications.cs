@@ -343,6 +343,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             }}
             spork ~ ReplaceNotesForPart3();
 
+            200::ms => dur oscInformInterval;
 
             fun void WhileLoop1()
             {{
@@ -384,7 +385,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                         vrSays[i].addFloat( mySawNotes[1][4] );
 
                     }}
-                    10::ms => now;
+                    oscInformInterval => now;
                 }}
             }}
             spork ~ WhileLoop1();
@@ -420,6 +421,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
             fun void InformOfWavingHandIntensity()
             {{
+                // offset
+                0.5::oscInformInterval => now;
+
                 while( true ) 
                 {{
                     for( int i; i < vrSays.size(); i++ )
@@ -427,7 +431,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                         vrSays[ i ].startMsg( ""/part2/chordBaselineIntensity"", ""f"" );
                         vrSays[ i ].addFloat( wavingHandIntensity );
                     }}
-                    20::ms => now;
+                    oscInformInterval => now;
                 }}
             }}
             
@@ -440,6 +444,8 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             0.1 => float distortionAmountSlew;
             fun void SendDistortionAmount()
             {{
+                // offset
+                0.75::oscInformInterval => now;
                 while( true )
                 {{
                     distortionAmountSlew * ( part2DistortionAmount - currentDistortionAmount ) +=> currentDistortionAmount;
@@ -448,7 +454,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                         vrSays[ i ].startMsg( ""/part2Distortion"", ""f"" );
                         vrSays[ i ].addFloat( currentDistortionAmount );
                     }}
-                    50::ms => now;
+                    oscInformInterval => now;
                 }}
             }}
             spork ~ SendDistortionAmount();
@@ -638,6 +644,8 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             }}
             spork ~ DoRaindrops();
 
+            // offset
+            0.25::oscInformInterval => now;
             while( true )
             {{
                 for( int i; i < vrSays.size(); i++ )
@@ -647,7 +655,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                     vrSays[i].addFloat( myArpeggio3[myCurrentNote3] );
 
                 }}
-                10::ms => now;
+                oscInformInterval => now;
             }}
         ",
             string.Join( ", ", myModalNotesPart1 ),
