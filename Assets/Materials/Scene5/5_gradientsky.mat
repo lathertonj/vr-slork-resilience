@@ -67,7 +67,7 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _SkyExponent1: 0.7
+    - _SkyExponent1: 2.5
     - _SkyExponent2: 3
     - _SkyIntensity: 1
     - _SmoothnessTextureChannel: 0
@@ -83,8 +83,8 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _SkyColor1: {r: 0.24807057, g: 0.811, b: 0.6583412, a: 1}
-    - _SkyColor2: {r: 0.101960756, g: 0.3333333, b: 0.2705882, a: 1}
+    - _SkyColor1: {r: 0.07538461, g: 0.20102565, b: 0.245, a: 1}
+    - _SkyColor2: {r: 0.24705882, g: 0.8117647, b: 0.65882355, a: 1}
     - _SkyColor3: {r: 0.029976469, g: 0.09799997, b: 0.07955294, a: 1}
     - _SunColor: {r: 1, g: 0.99218744, b: 0.87499994, a: 1}
     - _SunVector: {r: 0.269, g: 0.615, b: 0.74, a: 0}
