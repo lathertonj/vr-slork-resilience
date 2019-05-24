@@ -105,8 +105,8 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                     StartChuckPart2();
                     break;
                 case 3:
-                    StartChuckPart3();
-                    //Debug.Log( "NOTE: advancing to part 3 via button is disabled!" );
+                    //StartChuckPart3();
+                    Debug.Log( "NOTE: advancing to part 3 via button is disabled!" );
                     break;
                 default:
                     break;

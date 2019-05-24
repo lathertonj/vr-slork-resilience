@@ -1,4 +1,2 @@
-169.254.251.68
+192.168.177.6
 jambalaya.local
-nachos.local
-omelet.local
