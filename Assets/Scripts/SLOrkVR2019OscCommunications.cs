@@ -43,7 +43,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
     public NPCLeafController3 theLeafToRaiseInPart4;
     public ParticleSystem theRain;
-    public float biggerSwellsDelay = 0f, swellsNotFadeDelay = 15f, sunriseDelay = 12f, seedlingAppearDelay = 20f;
+    public float biggerSwellsDelay = 0f, swellsNotFadeDelay = 8f, sunriseDelay = 12f, seedlingAppearDelay = 20f;
     public float rainFadeoutTime = 15f, sunriseTime = 8f;
     public Color sunriseSky, sunriseHorizon;
     public Material malleableSkyMaterial;
@@ -51,8 +51,14 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     void StartChuckPart4()
     {
         Invoke( "MakeSeedlingAppear", seedlingAppearDelay );
+        Invoke( "PlayUnfadingSwells", swellsNotFadeDelay );
         StartCoroutine( SlowTheRainDown( rainFadeoutTime ) );
         StartCoroutine( MakeSunriseHappen( sunriseDelay, sunriseTime ) );
+    }
+
+    void PlayUnfadingSwells()
+    {
+        myChuck.BroadcastEvent( "startPart4" );
     }
 
     void MakeSeedlingAppear()
@@ -182,8 +188,8 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                     StartChuckPart2();
                     break;
                 case 3:
-                    StartChuckPart3();
-                    //Debug.Log( "NOTE: advancing to part 3 via button is disabled!" );
+                    //StartChuckPart3();
+                    Debug.Log( "NOTE: advancing to part 3 via button is disabled!" );
                     break;
                 case 4:
                     StartChuckPart4();
@@ -321,6 +327,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             global Event wavingHandOn;
             global Event wavingHandOff;
             global Event startPart1, startPart2, startPart3;
+            global Event startPart4, playPart4SeedlingSound;
             startPart1 => now;
 
             [{0}] @=> int myArpeggio[];
@@ -736,17 +743,36 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
             // offset
             0.25::oscInformInterval => now;
-            while( true )
+            fun void Part3OscInform()
+            {{
+                while( true )
+                {{
+                    for( int i; i < vrSays.size(); i++ )
+                    {{
+                        // send out the next note someone should play
+                        vrSays[i].startMsg( ""/part3/nextSeedlingNote"", ""f"" );
+                        vrSays[i].addFloat( myArpeggio3[myCurrentNote3] );
+
+                    }}
+                    oscInformInterval => now;
+                }}
+            }}
+            spork ~ Part3OscInform();
+            
+            startPart4 => now;
+
+            fun void InformOfUnfadingSwells()
             {{
                 for( int i; i < vrSays.size(); i++ )
                 {{
-                    // send out the next note someone should play
-                    vrSays[i].startMsg( ""/part3/nextSeedlingNote"", ""f"" );
-                    vrSays[i].addFloat( myArpeggio3[myCurrentNote3] );
-
+                    vrSays[i].startMsg( ""/playUnfadingSwell"", ""i"" );
+                    vrSays[i].addInt( 0 );
+                    Math.random2f( 0.5, 1.5 )::second => now;
                 }}
-                oscInformInterval => now;
             }}
+            spork ~ InformOfUnfadingSwells();
+
+            playPart4SeedlingSound => now;
         ",
             string.Join( ", ", myModalNotesPart1 ),
             string.Join( ", ", myAhhNotesPart1a1 ),
