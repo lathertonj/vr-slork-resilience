@@ -45,11 +45,14 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     public ParticleSystem theRain;
     public float biggerSwellsDelay = 0f, swellsNotFadeDelay = 15f, sunriseDelay = 12f, seedlingAppearDelay = 20f;
     public float rainFadeoutTime = 15f, sunriseTime = 8f;
+    public Color sunriseSky, sunriseHorizon;
+    public Material malleableSkyMaterial;
 
     void StartChuckPart4()
     {
         Invoke( "MakeSeedlingAppear", seedlingAppearDelay );
         StartCoroutine( SlowTheRainDown( rainFadeoutTime ) );
+        StartCoroutine( MakeSunriseHappen( sunriseDelay, sunriseTime ) );
     }
 
     void MakeSeedlingAppear()
@@ -63,7 +66,6 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
         var emission = theRain.emission;
         yield return new WaitForSecondsRealtime( rainFadeoutTime / 6 );
         emission.rateOverTime = 2;
-        Debug.Log( "less rain ");
 
         yield return new WaitForSecondsRealtime( rainFadeoutTime / 3 );
         emission.rateOverTime = 1;
@@ -71,6 +73,47 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
         yield return new WaitForSecondsRealtime( rainFadeoutTime / 3 );
         emission.rateOverTime = 0;
         
+    }
+
+    IEnumerator MakeSunriseHappen( float sunriseDelay, float sunriseTime )
+    {
+        Color startTopColor = RenderSettings.skybox.GetColor( "_SkyColor1" );
+        Color startHorizonColor = RenderSettings.skybox.GetColor( "_SkyColor2" );
+        RenderSettings.skybox = malleableSkyMaterial;
+        RenderSettings.skybox.SetColor( "_SkyColor1", startTopColor );
+        RenderSettings.skybox.SetColor( "_SkyColor2", startHorizonColor );
+        float startTopH, startTopS, startTopV, endTopH, endTopS, endTopV;
+        float startHorizonH, startHorizonS, startHorizonV, endHorizonH, endHorizonS, endHorizonV;
+        Color.RGBToHSV( startTopColor, out startTopH, out startTopS, out startTopV );
+        Color.RGBToHSV( sunriseSky, out endTopH, out endTopS, out endTopV );
+        Color.RGBToHSV( startHorizonColor, out startHorizonH, out startHorizonS, out startHorizonV );
+        Color.RGBToHSV( sunriseHorizon, out endHorizonH, out endHorizonS, out endHorizonV );
+
+        // make the hue go the other way for the horizon
+        endHorizonH += 1;
+
+        yield return new WaitForSecondsRealtime( sunriseDelay );
+
+        float t = 0f;
+        while( t < 1 )
+        {
+            t += Time.deltaTime / sunriseTime;
+            Color currentTopColor = Color.HSVToRGB(
+                t.MapClamp( 0, 1, startTopH, endTopH ),
+                t.MapClamp( 0, 1, startTopS, endTopS ),
+                t.MapClamp( 0, 1, startTopV, endTopV )
+            );
+            Color currentHorizonColor = Color.HSVToRGB(
+                t.MapClamp( 0, 1, startHorizonH, endHorizonH ) % 1.0f,
+                t.MapClamp( 0, 1, startHorizonS, endHorizonS ),
+                t.MapClamp( 0, 1, startHorizonV, endHorizonV )
+            );
+            RenderSettings.skybox.SetColor( "_SkyColor1", currentTopColor );
+            RenderSettings.skybox.SetColor( "_SkyColor2", currentHorizonColor );
+            yield return null;  
+        }
+        RenderSettings.skybox.SetColor( "_SkyColor1", sunriseSky );
+        RenderSettings.skybox.SetColor( "_SkyColor2", sunriseHorizon );    
     }
 
     // Start is called before the first frame update
