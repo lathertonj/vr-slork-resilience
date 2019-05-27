@@ -36,6 +36,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     public string[] mySawNotesPart3a2;
     public string[] myArpeggioPart3a;
     public string[] myArpeggioPart3b;
+    public string[] myFinalArpeggio;
     public string[] lightningFiles;
     int nextMovementToInit = 1;
     int nextLightningToPlay = 0;
@@ -63,7 +64,11 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
     void MakeSeedlingAppear()
     {
+        // visuals
         theLeafToRaiseInPart4.StartGrowing();
+
+        // audio
+        myChuck.BroadcastEvent( @"playPart4SeedlingSound" );
     }
 
     IEnumerator SlowTheRainDown( float rainFadeoutTime )
@@ -773,6 +778,41 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             spork ~ InformOfUnfadingSwells();
 
             playPart4SeedlingSound => now;
+
+            [{22}] @=> int myFinalArpeggio[];
+            for( int j; j < myFinalArpeggio.size(); j++ )
+            {{
+                // play each one on 3 stations
+                repeat( 3 ) 
+                {{
+                    Math.random2( 0, vrSays.size() - 1 ) => int which;
+                    // play note
+                    vrSays[ which ].startMsg( ""/playModal"", ""f,f,f"" );
+                    vrSays[ which ].addFloat( myFinalArpeggio[j] );
+                    vrSays[ which ].addFloat( Math.random2f( 0.2, 0.8 ) );
+                    vrSays[ which ].addFloat( Math.random2f( 0.3, 0.4 ) + 0.17 * hardPick );
+
+                    // switch for next time
+                    !hardPick => hardPick;
+                }}
+
+                // wait
+                170::ms => now;
+            }}
+
+            // wait 
+            0.5::second => now;
+
+            // tell machines to turn off
+            while( true )
+            {{
+                for( int i; i < vrSays.size(); i++ )
+                {{
+                    vrSays[i].startMsg( ""/turnOffSaw"", ""i"" );
+                    vrSays[i].addInt( 0 );
+                }}
+                oscInformInterval => now;
+            }}
         ",
             string.Join( ", ", myModalNotesPart1 ),
             string.Join( ", ", myAhhNotesPart1a1 ),
@@ -795,7 +835,8 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             string.Join( ", ", mySawNotesPart3a2 ),
             string.Join( ", ", myArpeggioPart3b ),
             string.Join( ", ", mySawNotesPart1a1 ),
-            string.Join( ", ", mySawNotesPart1a2 )
+            string.Join( ", ", mySawNotesPart1a2 ),
+            string.Join( ", ", myFinalArpeggio )
         ) );
     }
 
