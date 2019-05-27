@@ -41,6 +41,38 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     int nextLightningToPlay = 0;
     bool overIsland = false;
 
+    public NPCLeafController3 theLeafToRaiseInPart4;
+    public ParticleSystem theRain;
+    public float biggerSwellsDelay = 0f, swellsNotFadeDelay = 15f, sunriseDelay = 12f, seedlingAppearDelay = 20f;
+    public float rainFadeoutTime = 15f, sunriseTime = 8f;
+
+    void StartChuckPart4()
+    {
+        Invoke( "MakeSeedlingAppear", seedlingAppearDelay );
+        StartCoroutine( SlowTheRainDown( rainFadeoutTime ) );
+    }
+
+    void MakeSeedlingAppear()
+    {
+        theLeafToRaiseInPart4.StartGrowing();
+    }
+
+    IEnumerator SlowTheRainDown( float rainFadeoutTime )
+    {
+        // ASSUME IT STARTS AT 3
+        var emission = theRain.emission;
+        yield return new WaitForSecondsRealtime( rainFadeoutTime / 6 );
+        emission.rateOverTime = 2;
+        Debug.Log( "less rain ");
+
+        yield return new WaitForSecondsRealtime( rainFadeoutTime / 3 );
+        emission.rateOverTime = 1;
+
+        yield return new WaitForSecondsRealtime( rainFadeoutTime / 3 );
+        emission.rateOverTime = 0;
+        
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -107,8 +139,11 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                     StartChuckPart2();
                     break;
                 case 3:
-                    //StartChuckPart3();
-                    Debug.Log( "NOTE: advancing to part 3 via button is disabled!" );
+                    StartChuckPart3();
+                    //Debug.Log( "NOTE: advancing to part 3 via button is disabled!" );
+                    break;
+                case 4:
+                    StartChuckPart4();
                     break;
                 default:
                     break;
@@ -727,4 +762,6 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
         // turn off trail rendering
         SlewFollower.trailsRendering = false;
     }
+
+    
 }
