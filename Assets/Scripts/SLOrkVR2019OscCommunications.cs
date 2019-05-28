@@ -40,7 +40,6 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     public string[] lightningFiles;
     int nextMovementToInit = 1;
     int nextLightningToPlay = 0;
-    bool overIsland = false;
 
     public NPCLeafController3 theLeafToRaiseInPart4;
     public ParticleSystem theRain;
@@ -130,6 +129,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // disable cursor
+        Cursor.visible = false;
+
         myChuck = GetComponent<ChuckSubInstance>();
         myOSC = GetComponent<OSCSendReceiver>();
         myLightningVisuals = GetComponent<LightningVisuals>();
