@@ -47,6 +47,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     public float rainFadeoutTime = 15f, sunriseTime = 8f;
     public Color sunriseSky, sunriseHorizon;
     public Material malleableSkyMaterial;
+    private bool inPart2 = false;
 
     void StartChuckPart4()
     {
@@ -150,7 +151,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
     bool ShouldPlayLightning()
     {
-        return playLightningAction.GetStateDown( handType );
+        return inPart2 && playLightningAction.GetStateDown( handType );
     }
 
     void SetColorsPart1()
@@ -861,6 +862,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
         // turn on trail rendering
         SlewFollower.trailsRendering = true;
+
+        // remember for lightning
+        inPart2 = true;
     }
 
     void StartChuckPart3()
@@ -873,6 +877,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
         // turn off trail rendering
         SlewFollower.trailsRendering = false;
+
+        // disable lightning
+        inPart2 = false;
     }
 
     
