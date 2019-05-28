@@ -49,6 +49,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     public Material malleableSkyMaterial;
     private bool inPart2 = false;
 
+    public Light sunlight;
+    public Color sunlightEndColorAtSunrise;
+
     void StartChuckPart4()
     {
         Invoke( "MakeSeedlingAppear", seedlingAppearDelay );
@@ -103,6 +106,8 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
         // make the hue go the other way for the horizon
         endHorizonH += 1;
 
+        Color startSunlightColor = sunlight.color;
+
         yield return new WaitForSecondsRealtime( sunriseDelay );
 
         float t = 0f;
@@ -121,10 +126,13 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             );
             RenderSettings.skybox.SetColor( "_SkyColor1", currentTopColor );
             RenderSettings.skybox.SetColor( "_SkyColor2", currentHorizonColor );
+
+            sunlight.color = Color.Lerp( startSunlightColor, sunlightEndColorAtSunrise, t );
             yield return null;  
         }
         RenderSettings.skybox.SetColor( "_SkyColor1", sunriseSky );
         RenderSettings.skybox.SetColor( "_SkyColor2", sunriseHorizon );    
+        sunlight.color = sunlightEndColorAtSunrise;
     }
 
     // Start is called before the first frame update
