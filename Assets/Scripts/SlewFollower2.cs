@@ -6,7 +6,7 @@ public class SlewFollower2 : MonoBehaviour
 {
 
     public Transform objectToFollow;
-    public float positionSlew = 0.1f, rotationSlew = 0.1f;
+    public float positionSlew = 1f, rotationSlew = 1f;
     private Vector3 currentPos, goalPos;
     private Quaternion currentRotation, goalRotation;
 
@@ -26,8 +26,8 @@ public class SlewFollower2 : MonoBehaviour
         goalRotation = objectToFollow.rotation;
 
         // compute
-        currentPos += positionSlew * ( goalPos - currentPos );
-        currentRotation = Quaternion.Slerp( currentRotation, goalRotation, rotationSlew );
+        currentPos += positionSlew * Time.deltaTime * ( goalPos - currentPos );
+        currentRotation = Quaternion.Slerp( currentRotation, goalRotation, rotationSlew * Time.deltaTime );
 
         // set
         transform.position = currentPos;

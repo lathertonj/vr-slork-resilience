@@ -1,2 +1,2 @@
 192.168.177.6
-omelet.local
+spam.local
