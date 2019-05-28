@@ -38,7 +38,7 @@ public class NPCLeafController3 : MonoBehaviour
         yEffectSize = effectDamping.y * Random.Range( effectRange.x, effectRange.y ) / 2;
         zEffectSize = effectDamping.z * Random.Range( effectRange.x, effectRange.y );
 
-        downAmount = 1.5f * Vector3.up;
+        downAmount = 1.5f * myBase.localScale.x * Vector3.up;
         myBase.position -= downAmount;
     }
 
