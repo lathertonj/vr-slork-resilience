@@ -86,6 +86,10 @@ public class Part2CommunicateWavingHand : MonoBehaviour
         {
             room.GetComponent<Part23MoveRoom>().TransitionFromPart2To3();
         }
+
+        // also map distance to tension kick volume
+        float volume = ( room.transform.position - overrideGestureLocation.position ).magnitude.MapClamp( 125, 0, 0, 1 );
+        theChuck.SetFloat( "part2TensionLoudness", volume );
     }
 
     private bool CloseToOverrideLocation()

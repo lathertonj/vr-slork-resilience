@@ -311,6 +311,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
             // chords
             myChuck.BroadcastEvent( "part2bChords" );
 
+            // start doing tension
+            myChuck.SetInt( "shouldPlayPart2Tension", 1 );
+
             // visuals
             SetColorsPart2b();
         }
@@ -629,8 +632,11 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
 
             global Event part2SeedlingNotePlayed;
+            0 => global float part2TensionLoudness;
+            false => global int shouldPlayPart2Tension;
             fun void SendTempoEvents()
             {{
+                int j;
                 while( true )
                 {{
                     for( int i; i < myArpeggio2.size(); i++ )
@@ -641,12 +647,25 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                         vrSays[ currentReceiver ].addFloat( Math.random2f( 0.2, 0.8 ) );
                         vrSays[ currentReceiver ].addFloat( Math.random2f( 0.3, 0.4 ) + 0.17 * hardPick );
 
+                        // maybe play tension event
+                        if( shouldPlayPart2Tension && ( j == 0 || j == 3 ) )
+                        {{
+                            Math.random2( 0, vrSays.size() - 1 ) => int which;
+                            Math.random2f( 0.8, 1.3 ) => float rate;
+                            vrSays[ which ].startMsg( ""/playTensionKick"", ""f,f"" );
+                            vrSays[ which ].addFloat( part2TensionLoudness );
+                            vrSays[ which ].addFloat( rate );
+                        }}
+
                         // switch for next time
                         !hardPick => hardPick;
 
                         // find next receiver
                         currentReceiver++;
                         currentReceiver % vrSays.size() => currentReceiver;
+
+                        // find next j
+                        (j + 1) % 8 => j;
 
                         // say to the animation
                         part2SeedlingNotePlayed.broadcast();
