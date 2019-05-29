@@ -48,9 +48,12 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
     public Color sunriseSky, sunriseHorizon;
     public Material malleableSkyMaterial;
     private bool inPart2 = false;
+    private bool part4Done = false;
 
     public Light sunlight;
     public Color sunlightEndColorAtSunrise;
+    public Color endingColor;
+    public float endingColorFadeTime;
 
     void StartChuckPart4()
     {
@@ -72,6 +75,9 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
         // audio
         myChuck.BroadcastEvent( @"playPart4SeedlingSound" );
+
+        // remember
+        part4Done = true;
     }
 
     IEnumerator SlowTheRainDown( float rainFadeoutTime )
@@ -133,6 +139,14 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
         RenderSettings.skybox.SetColor( "_SkyColor1", sunriseSky );
         RenderSettings.skybox.SetColor( "_SkyColor2", sunriseHorizon );    
         sunlight.color = sunlightEndColorAtSunrise;
+    }
+
+    bool haveFadedAtEnd = false;
+    void AdvanceToEndingColor()
+    {
+        if( haveFadedAtEnd ) { return; }
+        SteamVR_Fade.Start( endingColor, endingColorFadeTime );
+        haveFadedAtEnd = true;
     }
 
     // Start is called before the first frame update
@@ -211,6 +225,10 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                     StartChuckPart4();
                     break;
                 default:
+                    if( part4Done )
+                    {
+                        AdvanceToEndingColor();
+                    }
                     break;
             }
             nextMovementToInit++;
