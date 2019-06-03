@@ -218,7 +218,7 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                     StartChuckPart2();
                     break;
                 case 3:
-                    //StartChuckPart3();
+                    StartChuckPart3b();
                     Debug.Log( "NOTE: advancing to part 3 via button is disabled!" );
                     break;
                 case 4:
@@ -811,6 +811,21 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
                 }}
             }}
             spork ~ Part3OscInform();
+
+            global Event startPart3b;
+            startPart3b => now;
+
+            fun void Part3bOscInform()
+            {{
+                for( int i; i < vrSays.size(); i++ )
+                {{
+                    // inform it's ok to start meditating
+                    vrSays[i].startMsg( ""/part3/canLaterMeditate"", ""i"" );
+                    vrSays[i].addInt( 1 );
+                }}
+                oscInformInterval => now;
+            }}
+            spork ~ Part3bOscInform();
             
             startPart4 => now;
 
@@ -925,6 +940,12 @@ public class SLOrkVR2019OscCommunications : MonoBehaviour
 
         // disable lightning
         inPart2 = false;
+    }
+
+    void StartChuckPart3b()
+    {
+        // tell chuck to send a message it's ok to advance now
+        myChuck.BroadcastEvent( "startPart3b" );
     }
 
     
