@@ -1,2 +1,2 @@
 192.168.177.6
-jambalaya.local
+udon.local
