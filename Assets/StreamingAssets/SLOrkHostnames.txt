@@ -1,2 +1,9 @@
-192.168.177.6
+169.254.251.68
+omelet.local
+pho.local
+foiegras.local
+nachos.local
+empanada.local
+meatloaf.local
+chowder.local
 udon.local

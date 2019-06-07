@@ -21,7 +21,7 @@ public class Part1MoveRoom : MonoBehaviour
         numSeedlingsLaunched++;
         if( numSeedlingsLaunched >= 5 )
         {
-            goalLocation += 0.6f * Vector3.up;
+            goalLocation += 0.2f * Vector3.up;
         }
     }
 
